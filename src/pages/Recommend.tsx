@@ -5,7 +5,7 @@ import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
 import type { MoodTag, TimeTag, WeatherTag } from "@/lib/store";
 
-function TagGroup({
+function TagGroup<T extends string>({
   label,
   icon,
   options,
