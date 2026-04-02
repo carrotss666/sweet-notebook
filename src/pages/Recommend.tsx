@@ -67,7 +67,7 @@ export default function Recommend() {
           icon="😊"
           options={["轻松", "无聊", "疲惫"] as MoodTag[]}
           selected={mood}
-          onSelect={setMood}
+          onSelect={(v) => setMood(v as MoodTag)}
         />
         <TagGroup
           label="时间"
