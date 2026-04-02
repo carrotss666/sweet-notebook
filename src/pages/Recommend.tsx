@@ -81,7 +81,7 @@ export default function Recommend() {
           icon="🌤"
           options={["晴天", "雨天", "随意"] as WeatherTag[]}
           selected={weather}
-          onSelect={setWeather}
+          onSelect={(v) => setWeather(v as WeatherTag)}
         />
       </motion.div>
 
