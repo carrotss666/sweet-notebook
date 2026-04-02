@@ -74,7 +74,7 @@ export default function Recommend() {
           icon="⏰"
           options={["工作日", "周末", "晚上"] as TimeTag[]}
           selected={time}
-          onSelect={setTime}
+          onSelect={(v) => setTime(v as TimeTag)}
         />
         <TagGroup
           label="天气"
