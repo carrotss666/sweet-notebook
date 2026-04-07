@@ -2,10 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
+import { setPending } from "@/lib/store";
 
 export default function CustomDecide() {
   const navigate = useNavigate();
   const [text, setText] = useState("");
+
+  const start = () => {
+    if (!text.trim()) return;
+    setPending({ emoji: "💕", title: text.trim(), startedAt: new Date().toISOString() });
+    navigate("/");
+  };
 
   return (
     <PageWrapper>
@@ -23,9 +30,7 @@ export default function CustomDecide() {
 
       <button
         disabled={!text.trim()}
-        onClick={() =>
-          navigate("/in-progress", { state: { emoji: "💕", title: text.trim() } })
-        }
+        onClick={start}
         className="mt-6 w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft disabled:opacity-40 transition-all"
       >
         ❤️ 开始这次约会

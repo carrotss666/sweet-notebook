@@ -2,11 +2,12 @@
 
 export interface Memory {
   id: string;
-  date: string;
+  date: string; // YYYY.MM.DD
   activity: string;
   emoji: string;
   note: string;
   photo?: string; // base64
+  mood?: string; // emoji mood
 }
 
 export interface ChecklistItem {
@@ -16,9 +17,35 @@ export interface ChecklistItem {
   rating: number; // 1-5
 }
 
+export interface PendingActivity {
+  emoji: string;
+  title: string;
+  startedAt: string; // ISO
+}
+
 const MEMORIES_KEY = "love-notebook-memories";
 const CHECKLIST_KEY = "love-notebook-checklist";
+const PENDING_KEY = "love-notebook-pending";
 
+// --- Pending Activity ---
+export function getPending(): PendingActivity | null {
+  try {
+    const raw = localStorage.getItem(PENDING_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setPending(p: PendingActivity) {
+  localStorage.setItem(PENDING_KEY, JSON.stringify(p));
+}
+
+export function clearPending() {
+  localStorage.removeItem(PENDING_KEY);
+}
+
+// --- Memories ---
 export function getMemories(): Memory[] {
   try {
     return JSON.parse(localStorage.getItem(MEMORIES_KEY) || "[]");
@@ -33,12 +60,22 @@ export function saveMemory(m: Memory) {
   localStorage.setItem(MEMORIES_KEY, JSON.stringify(all));
 }
 
+export function updateMemory(updated: Memory) {
+  const all = getMemories().map((m) => (m.id === updated.id ? updated : m));
+  localStorage.setItem(MEMORIES_KEY, JSON.stringify(all));
+}
+
+export function deleteMemory(id: string) {
+  const all = getMemories().filter((m) => m.id !== id);
+  localStorage.setItem(MEMORIES_KEY, JSON.stringify(all));
+}
+
+// --- Checklist ---
 export function getChecklist(): ChecklistItem[] {
   try {
     const items = JSON.parse(localStorage.getItem(CHECKLIST_KEY) || "null");
     if (items) return items;
   } catch {}
-  // Default items
   const defaults: ChecklistItem[] = [
     { id: "1", emoji: "🍜", title: "去没吃过的店", rating: 4 },
     { id: "2", emoji: "🚶", title: "随机散步", rating: 3 },
@@ -58,6 +95,11 @@ export function saveChecklist(items: ChecklistItem[]) {
 export function addChecklistItem(item: ChecklistItem) {
   const all = getChecklist();
   all.push(item);
+  saveChecklist(all);
+}
+
+export function updateChecklistItem(updated: ChecklistItem) {
+  const all = getChecklist().map((i) => (i.id === updated.id ? updated : i));
   saveChecklist(all);
 }
 

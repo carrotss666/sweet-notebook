@@ -1,24 +1,34 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
-import { getRandomActivity } from "@/lib/store";
+import { getRandomActivity, setPending } from "@/lib/store";
 
 export default function RandomResult() {
   const navigate = useNavigate();
-  const [activity, setActivity] = useState(getRandomActivity);
+  const location = useLocation();
+  const customItems = (location.state as any)?.customItems as { emoji: string; title: string }[] | undefined;
+
+  const getNext = () => {
+    if (customItems && customItems.length > 0) {
+      const item = customItems[Math.floor(Math.random() * customItems.length)];
+      return { emoji: item.emoji, title: item.title, quote: "你们其实早就想去了吧 ✨" };
+    }
+    return getRandomActivity();
+  };
+
+  const [activity, setActivity] = useState(getNext);
   const [key, setKey] = useState(0);
 
   const reroll = () => {
-    setActivity(getRandomActivity());
+    setActivity(getNext());
     setKey((k) => k + 1);
   };
 
   const start = () => {
-    navigate("/in-progress", {
-      state: { emoji: activity.emoji, title: activity.title },
-    });
+    setPending({ emoji: activity.emoji, title: activity.title, startedAt: new Date().toISOString() });
+    navigate("/");
   };
 
   return (
@@ -47,7 +57,7 @@ export default function RandomResult() {
           onClick={reroll}
           className="mt-6 text-primary font-medium text-sm hover:underline"
         >
-          🔄 换一个
+          🔄 再抽一次
         </button>
 
         <button
