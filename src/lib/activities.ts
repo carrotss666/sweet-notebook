@@ -108,7 +108,7 @@ export const ACTIVITIES_V2: Activity[] = [
   { id:87, emoji:"😊", title:"不抱怨挑战（持续一天）", tags:["挑战"], mood:["轻松"], time:["周末"], weather:["随意"], lines:["积极的一天"], energy:"low" },
   { id:88, emoji:"🧠", title:"互相猜对方在想什么", tags:["互动","挑战"], mood:["轻松","无聊"], time:["晚上"], weather:["随意"], lines:["看看默契值多少"], energy:"low" },
   { id:89, emoji:"😶", title:"只用表情聊天10分钟", tags:["互动","挑战"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["考验默契"], energy:"low" },
-  { id:90, emoji:"🚫", title:"不说"随便"挑战", tags:["挑战"], mood:["轻松"], time:["周末"], weather:["随意"], lines:["今天必须有主见"], energy:"low" },
+  { id:90, emoji:"🚫", title:"不说「随便」挑战", tags:["挑战"], mood:["轻松"], time:["周末"], weather:["随意"], lines:["今天必须有主见"], energy:"low" },
   { id:91, emoji:"🌟", title:"做一件平时不会做的事", tags:["挑战"], mood:["无聊"], time:["周末"], weather:["随意"], lines:["试试新的自己"], energy:"medium" },
   { id:92, emoji:"😄", title:"给陌生人一个微笑", tags:["挑战"], mood:["轻松","开心"], time:["周末"], weather:["晴天"], lines:["善意会传递"], energy:"low" },
   { id:93, emoji:"💕", title:"今天夸对方3次", tags:["互动","挑战"], mood:["开心"], time:["周末"], weather:["随意"], lines:["夸人也是一种能力"], energy:"low" },
