@@ -98,7 +98,7 @@ export const ACTIVITIES_V2: Activity[] = [
   { id:79, emoji:"✨", title:"记录今天最开心的瞬间", tags:["记录"], mood:["开心"], time:["晚上"], weather:["随意"], lines:["开心值得被记住"], energy:"low" },
   { id:80, emoji:"📸", title:"拍同一个姿势的照片", tags:["拍照","互动"], mood:["开心"], time:["周末"], weather:["晴天"], lines:["同款情侣照"], energy:"medium" },
   { id:81, emoji:"📝", title:"用一句话记录今天", tags:["记录"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["一句话就够了"], energy:"low" },
-  { id:82, emoji:"📸", title:"拍一张"现在的我们"", tags:["拍照"], mood:["开心"], time:["周末"], weather:["随意"], lines:["记录此刻的样子"], energy:"low" },
+  { id:82, emoji:"📸", title:"拍一张「现在的我们」", tags:["拍照"], mood:["开心"], time:["周末"], weather:["随意"], lines:["记录此刻的样子"], energy:"low" },
   { id:83, emoji:"🎤", title:"留一条语音给对方", tags:["记录","互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["声音比文字更温暖"], energy:"low" },
   { id:84, emoji:"📸", title:"拍一张搞怪照", tags:["拍照","搞笑"], mood:["开心"], time:["周末"], weather:["随意"], lines:["丑也是一种回忆"], energy:"low" },
   { id:85, emoji:"📋", title:"做一个小合集", tags:["记录"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["把碎片拼起来"], energy:"low" },
