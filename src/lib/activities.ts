@@ -93,7 +93,7 @@ export const ACTIVITIES_V2: Activity[] = [
 
   // 📸 回忆制造类 (10)
   { id:76, emoji:"📸", title:"给对方拍今日最佳照片", tags:["拍照"], mood:["开心"], time:["周末"], weather:["晴天"], lines:["用你的视角看我"], energy:"medium" },
-  { id:77, emoji:"📸", title:"拍一张"以后会翻到"的照片", tags:["拍照"], mood:["轻松"], time:["周末"], weather:["晴天"], lines:["未来的你会感谢现在"], energy:"medium" },
+  { id:77, emoji:"📸", title:"拍一张「以后会翻到」的照片", tags:["拍照"], mood:["轻松"], time:["周末"], weather:["晴天"], lines:["未来的你会感谢现在"], energy:"medium" },
   { id:78, emoji:"📸", title:"拍一张对方不注意的瞬间", tags:["拍照"], mood:["轻松"], time:["周末"], weather:["随意"], lines:["最自然最真实"], energy:"low" },
   { id:79, emoji:"✨", title:"记录今天最开心的瞬间", tags:["记录"], mood:["开心"], time:["晚上"], weather:["随意"], lines:["开心值得被记住"], energy:"low" },
   { id:80, emoji:"📸", title:"拍同一个姿势的照片", tags:["拍照","互动"], mood:["开心"], time:["周末"], weather:["晴天"], lines:["同款情侣照"], energy:"medium" },
