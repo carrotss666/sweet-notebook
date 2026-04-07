@@ -50,7 +50,7 @@ export default function RandomResult() {
             <span className="text-5xl block mb-3">{activity.emoji}</span>
             <h2 className="text-xl font-bold mb-2">{activity.title}</h2>
             <p className="text-sm text-muted-foreground italic">
-              "{activity.quote}"
+              "{activity.line}"
             </p>
           </motion.div>
         </AnimatePresence>
