@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
-import { getRandomActivity, setPending } from "@/lib/store";
+import { getRandomActivity } from "@/lib/recommend";
+import { setPending } from "@/lib/store";
 
 export default function RandomResult() {
   const navigate = useNavigate();
