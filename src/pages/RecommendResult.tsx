@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
-import { getRecommendations, type MoodTag, type TimeTag, type WeatherTag } from "@/lib/store";
+import { getRecommendations, setPending, type MoodTag, type TimeTag, type WeatherTag } from "@/lib/store";
 
 export default function RecommendResult() {
   const location = useLocation();
@@ -22,6 +22,11 @@ export default function RecommendResult() {
   const refresh = () => {
     setResults(getRecommendations({ mood, time, weather }));
     setKey((k) => k + 1);
+  };
+
+  const startDate = (emoji: string, title: string) => {
+    setPending({ emoji, title, startedAt: new Date().toISOString() });
+    navigate("/");
   };
 
   return (
@@ -58,11 +63,7 @@ export default function RecommendResult() {
                 <button className="hover:scale-125 transition-transform">👎</button>
               </div>
               <button
-                onClick={() =>
-                  navigate("/in-progress", {
-                    state: { emoji: item.emoji, title: item.title },
-                  })
-                }
+                onClick={() => startDate(item.emoji, item.title)}
                 className="text-sm bg-primary text-primary-foreground px-4 py-1.5 rounded-xl font-medium"
               >
                 ❤️ 去做这个

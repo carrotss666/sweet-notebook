@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { saveMemory, generateId } from "@/lib/store";
+import { saveMemory, generateId, clearPending } from "@/lib/store";
 
 interface Props {
   activity: string;
   emoji: string;
   onClose: () => void;
+  onSaved?: () => void;
 }
 
-export default function RecordDialog({ activity, emoji, onClose }: Props) {
+export default function RecordDialog({ activity, emoji, onClose, onSaved }: Props) {
   const navigate = useNavigate();
   const [note, setNote] = useState("");
   const [photo, setPhoto] = useState<string | undefined>();
+  const [mood, setMood] = useState("😊");
+
+  const moods = ["😊", "😐", "😍", "😢", "🤩"];
 
   const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -30,7 +34,10 @@ export default function RecordDialog({ activity, emoji, onClose }: Props) {
       emoji,
       note,
       photo,
+      mood,
     });
+    clearPending();
+    onSaved?.();
     navigate("/save-success");
   };
 
@@ -49,6 +56,21 @@ export default function RecordDialog({ activity, emoji, onClose }: Props) {
         className="bg-card w-full max-w-md rounded-t-3xl p-6 pb-8"
       >
         <h3 className="text-center text-lg font-bold mb-4">记录一下今天 💕</h3>
+
+        <label className="text-sm text-muted-foreground block mb-2">
+          今天心情如何？
+        </label>
+        <div className="flex gap-2 mb-4">
+          {moods.map((m) => (
+            <button
+              key={m}
+              onClick={() => setMood(m)}
+              className={`text-2xl transition-transform ${mood === m ? "scale-125 ring-2 ring-primary rounded-full" : "opacity-60 hover:opacity-100"}`}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
 
         <label className="text-sm text-muted-foreground block mb-2">
           今天感觉怎么样？💭

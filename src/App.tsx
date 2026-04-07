@@ -4,8 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
+import RandomPick from "./pages/RandomPick";
 import RandomResult from "./pages/RandomResult";
-import InProgress from "./pages/InProgress";
+import CustomWheel from "./pages/CustomWheel";
 import SaveSuccess from "./pages/SaveSuccess";
 import Recommend from "./pages/Recommend";
 import RecommendResult from "./pages/RecommendResult";
@@ -25,8 +26,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/random" element={<RandomResult />} />
-          <Route path="/in-progress" element={<InProgress />} />
+          <Route path="/random" element={<RandomPick />} />
+          <Route path="/random-result" element={<RandomResult />} />
+          <Route path="/custom-wheel" element={<CustomWheel />} />
           <Route path="/save-success" element={<SaveSuccess />} />
           <Route path="/recommend" element={<Recommend />} />
           <Route path="/recommend-result" element={<RecommendResult />} />

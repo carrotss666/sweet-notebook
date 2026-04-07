@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BottomNav from "@/components/BottomNav";
+import RecordDialog from "@/components/RecordDialog";
+import { getPending, clearPending, type PendingActivity } from "@/lib/store";
 
 const actions = [
   {
@@ -26,6 +29,13 @@ const actions = [
 
 export default function Index() {
   const navigate = useNavigate();
+  const [pending, setPending] = useState<PendingActivity | null>(getPending);
+  const [showRecord, setShowRecord] = useState(false);
+
+  const handleDismissPending = () => {
+    clearPending();
+    setPending(null);
+  };
 
   return (
     <>
@@ -43,6 +53,33 @@ export default function Index() {
             今天要做什么？🎯
           </p>
         </motion.div>
+
+        {pending && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="love-card mb-4 border-2 border-primary/30"
+          >
+            <p className="text-sm font-medium text-primary mb-1">💕 有一段回忆待记录</p>
+            <p className="text-base font-semibold">
+              {pending.emoji} {pending.title}
+            </p>
+            <div className="flex gap-2 mt-3">
+              <button
+                onClick={() => setShowRecord(true)}
+                className="flex-1 bg-primary text-primary-foreground py-2 rounded-xl text-sm font-medium"
+              >
+                去记录
+              </button>
+              <button
+                onClick={handleDismissPending}
+                className="px-4 bg-secondary text-secondary-foreground py-2 rounded-xl text-sm font-medium"
+              >
+                取消
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         <div className="space-y-4">
           {actions.map((action, i) => (
@@ -67,6 +104,18 @@ export default function Index() {
         </div>
       </PageWrapper>
       <BottomNav />
+
+      {showRecord && pending && (
+        <RecordDialog
+          activity={pending.title}
+          emoji={pending.emoji}
+          onClose={() => setShowRecord(false)}
+          onSaved={() => {
+            clearPending();
+            setPending(null);
+          }}
+        />
+      )}
     </>
   );
 }
