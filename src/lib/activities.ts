@@ -30,7 +30,7 @@ export const ACTIVITIES_V2: Activity[] = [
   { id:14, emoji:"🍜", title:"只点从没见过的菜名", tags:["吃饭","探索"], mood:["无聊"], time:["周末"], weather:["随意"], lines:["未知才有趣"], energy:"low" },
   { id:15, emoji:"📝", title:"边吃边给每道菜打分", tags:["吃饭","互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["今天当美食评委"], energy:"low" },
   { id:16, emoji:"📸", title:"去一家环境最好看的店", tags:["吃饭","拍照"], mood:["轻松"], time:["周末"], weather:["晴天"], lines:["今天吃的是氛围"], energy:"medium" },
-  { id:17, emoji:"🍜", title:"吃一顿"童年套餐"", tags:["吃饭","回忆"], mood:["轻松"], time:["周末"], weather:["随意"], lines:["回到小时候的快乐"], energy:"medium" },
+  { id:17, emoji:"🍜", title:"吃一顿「童年套餐」", tags:["吃饭","回忆"], mood:["轻松"], time:["周末"], weather:["随意"], lines:["回到小时候的快乐"], energy:"medium" },
   { id:18, emoji:"🍜", title:"选一家评价两极分化的店", tags:["吃饭","探索"], mood:["无聊"], time:["周末"], weather:["随意"], lines:["看看你们属于哪一派"], energy:"medium" },
   { id:19, emoji:"🍜", title:"只点对方爱吃但自己不爱的", tags:["吃饭","互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["理解从这里开始"], energy:"low" },
   { id:20, emoji:"🍜", title:"吃完后互相写一句评价", tags:["吃饭","互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["简单一句也很珍贵"], energy:"low" },
