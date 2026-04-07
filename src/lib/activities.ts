@@ -69,7 +69,7 @@ export const ACTIVITIES_V2: Activity[] = [
   { id:54, emoji:"📋", title:"一起写一段未来计划", tags:["互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["想象一下未来"], energy:"low" },
   { id:55, emoji:"🤫", title:"说出三件对方不知道的事", tags:["互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["还有很多没说的"], energy:"low" },
   { id:56, emoji:"⭐", title:"互相评价今天的表现", tags:["互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["今天怎么样"], energy:"low" },
-  { id:57, emoji:"🔮", title:"玩"如果…会怎样"游戏", tags:["互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["假设很有趣"], energy:"low" },
+  { id:57, emoji:"🔮", title:"玩「如果…会怎样」游戏", tags:["互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["假设很有趣"], energy:"low" },
   { id:58, emoji:"🤫", title:"互相讲一个秘密", tags:["互动"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["更靠近一点"], energy:"low" },
   { id:59, emoji:"📸", title:"互相选一张对方最好看的照片", tags:["互动","拍照"], mood:["开心"], time:["晚上"], weather:["随意"], lines:["你眼中的我"], energy:"low" },
   { id:60, emoji:"📝", title:"各自写一句今天的总结", tags:["互动","记录"], mood:["轻松"], time:["晚上"], weather:["随意"], lines:["留一点痕迹"], energy:"low" },
