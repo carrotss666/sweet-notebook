@@ -14,9 +14,10 @@ export default function RandomResult() {
   const getNext = () => {
     if (customItems && customItems.length > 0) {
       const item = customItems[Math.floor(Math.random() * customItems.length)];
-      return { emoji: item.emoji, title: item.title, quote: "你们其实早就想去了吧 ✨" };
+      return { emoji: item.emoji, title: item.title, line: "你们其实早就想去了吧 ✨" };
     }
-    return getRandomActivity();
+    const a = getRandomActivity();
+    return { emoji: a.emoji, title: a.title, line: a.lines[0] };
   };
 
   const [activity, setActivity] = useState(getNext);
