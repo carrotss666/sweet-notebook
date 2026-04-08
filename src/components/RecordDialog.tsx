@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { saveMemory, generateId, clearPending } from "@/lib/store";
+import { saveMemory, clearPending, uploadImages } from "@/lib/cloudStore";
+import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
 
 interface Props {
   activity: string;
@@ -13,32 +14,35 @@ interface Props {
 export default function RecordDialog({ activity, emoji, onClose, onSaved }: Props) {
   const navigate = useNavigate();
   const [note, setNote] = useState("");
-  const [photo, setPhoto] = useState<string | undefined>();
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [mood, setMood] = useState("😊");
+  const [saving, setSaving] = useState(false);
 
   const moods = ["😊", "😐", "😍", "😢", "🤩"];
 
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result as string);
-    reader.readAsDataURL(file);
-  };
+  const handleSave = async () => {
+    if (saving) return;
+    try {
+      setSaving(true);
+      // Upload new images
+      const newFiles = images.filter((img) => img.file).map((img) => img.file!);
+      const fileIDs = newFiles.length > 0 ? await uploadImages(newFiles) : [];
 
-  const handleSave = () => {
-    saveMemory({
-      id: generateId(),
-      date: new Date().toISOString().slice(0, 10).replace(/-/g, "."),
-      activity,
-      emoji,
-      note,
-      photo,
-      mood,
-    });
-    clearPending();
-    onSaved?.();
-    navigate("/save-success");
+      await saveMemory({
+        date: new Date().toISOString().slice(0, 10).replace(/-/g, "."),
+        activity,
+        emoji,
+        note,
+        images: fileIDs,
+        mood,
+      });
+      await clearPending();
+      onSaved?.();
+      navigate("/save-success");
+    } catch (e) {
+      console.error("Save failed:", e);
+      setSaving(false);
+    }
   };
 
   return (
@@ -82,28 +86,16 @@ export default function RecordDialog({ activity, emoji, onClose, onSaved }: Prop
           className="w-full bg-secondary rounded-xl p-3 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
         />
 
-        <label className="mt-4 flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-          📸 + 添加照片（可选）
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handlePhoto}
-          />
-        </label>
-        {photo && (
-          <img
-            src={photo}
-            alt="preview"
-            className="mt-2 rounded-xl w-20 h-20 object-cover"
-          />
-        )}
+        <div className="mt-4">
+          <ImageUploader images={images} onChange={setImages} />
+        </div>
 
         <button
           onClick={handleSave}
-          className="mt-6 w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft"
+          disabled={saving}
+          className="mt-6 w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft disabled:opacity-60"
         >
-          ✅ 保存回忆
+          {saving ? "保存中…" : "✅ 保存回忆"}
         </button>
       </motion.div>
     </motion.div>

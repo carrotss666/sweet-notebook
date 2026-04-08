@@ -1,8 +1,18 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BottomNav from "@/components/BottomNav";
-import { getMemories, saveMemory, updateMemory, deleteMemory, generateId, type Memory } from "@/lib/store";
+import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
+import {
+  getMemories,
+  saveMemory,
+  updateMemory,
+  deleteMemory,
+  uploadImages,
+  getImageUrls,
+  deleteCloudFile,
+  type CloudMemory,
+} from "@/lib/cloudStore";
 
 const MOODS = ["😊", "😐", "😍", "😢", "🤩"];
 const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
@@ -21,28 +31,47 @@ function formatDate(y: number, m: number, d: number) {
 
 interface DayDetailProps {
   date: string;
-  memories: Memory[];
+  memories: CloudMemory[];
   onClose: () => void;
   onRefresh: () => void;
 }
 
 function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
-  const [editing, setEditing] = useState<Memory | null>(null);
+  const [editing, setEditing] = useState<CloudMemory | null>(null);
   const [adding, setAdding] = useState(false);
-
-  // Add form state
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
   const [mood, setMood] = useState("😊");
-  const [photo, setPhoto] = useState<string | undefined>();
+  const [images, setImages] = useState<ImageItem[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [imageUrlMap, setImageUrlMap] = useState<Record<string, string>>({});
 
-  const startEdit = (m: Memory) => {
+  // Load image URLs for all memories
+  useEffect(() => {
+    const allFileIDs = memories.flatMap((m) => m.images || []);
+    if (allFileIDs.length === 0) return;
+    getImageUrls(allFileIDs).then((urls) => {
+      const map: Record<string, string> = {};
+      allFileIDs.forEach((id, i) => { map[id] = urls[i]; });
+      setImageUrlMap(map);
+    });
+  }, [memories]);
+
+  const startEdit = async (m: CloudMemory) => {
     setEditing(m);
     setTitle(m.activity);
     setNote(m.note);
     setMood(m.mood || "😊");
-    setPhoto(m.photo);
     setAdding(false);
+    // Convert existing images to ImageItems
+    if (m.images && m.images.length > 0) {
+      const urls = await getImageUrls(m.images);
+      setImages(
+        m.images.map((fileID, i) => ({ fileID, preview: urls[i] }))
+      );
+    } else {
+      setImages([]);
+    }
   };
 
   const startAdd = () => {
@@ -51,43 +80,64 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
     setTitle("");
     setNote("");
     setMood("😊");
-    setPhoto(undefined);
+    setImages([]);
   };
 
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result as string);
-    reader.readAsDataURL(file);
-  };
+  const handleSave = async () => {
+    if (!title.trim() || saving) return;
+    try {
+      setSaving(true);
+      // Upload new files
+      const newFiles = images.filter((img) => img.file).map((img) => img.file!);
+      const newFileIDs = newFiles.length > 0 ? await uploadImages(newFiles) : [];
+      // Keep existing fileIDs
+      const existingFileIDs = images.filter((img) => img.fileID).map((img) => img.fileID!);
+      const allFileIDs = [...existingFileIDs, ...newFileIDs];
 
-  const handleSave = () => {
-    if (!title.trim()) return;
-    if (editing) {
-      updateMemory({ ...editing, activity: title.trim(), note, mood, photo });
-    } else {
-      saveMemory({
-        id: generateId(),
-        date,
-        activity: title.trim(),
-        emoji: "💕",
-        note,
-        mood,
-        photo,
-      });
+      if (editing) {
+        // Delete removed images from cloud
+        const removedIDs = (editing.images || []).filter((id) => !existingFileIDs.includes(id));
+        for (const id of removedIDs) {
+          try { await deleteCloudFile(id); } catch {}
+        }
+        await updateMemory(editing._id!, {
+          activity: title.trim(),
+          note,
+          mood,
+          images: allFileIDs,
+        });
+      } else {
+        await saveMemory({
+          date,
+          activity: title.trim(),
+          emoji: "💕",
+          note,
+          images: allFileIDs,
+          mood,
+        });
+      }
+      onRefresh();
+      setSaving(false);
+      setEditing(null);
+      setAdding(false);
+      setTitle("");
+      setNote("");
+      setMood("😊");
+      setImages([]);
+    } catch (e) {
+      console.error("Save failed:", e);
+      setSaving(false);
     }
-    onRefresh();
-    setEditing(null);
-    setAdding(false);
-    setTitle("");
-    setNote("");
-    setMood("😊");
-    setPhoto(undefined);
   };
 
-  const handleDelete = (id: string) => {
-    deleteMemory(id);
+  const handleDelete = async (id: string) => {
+    const mem = memories.find((m) => m._id === id);
+    if (mem?.images) {
+      for (const fid of mem.images) {
+        try { await deleteCloudFile(fid); } catch {}
+      }
+    }
+    await deleteMemory(id);
     onRefresh();
     setEditing(null);
   };
@@ -117,8 +167,8 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
         )}
 
         {memories.map((m) =>
-          editing?.id === m.id ? null : (
-            <div key={m.id} className="love-card mb-3">
+          editing?._id === m._id ? null : (
+            <div key={m._id} className="love-card mb-3">
               <div className="flex items-start gap-2">
                 <span className="text-lg">{m.mood || m.emoji}</span>
                 <div className="flex-1">
@@ -126,14 +176,23 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
                   {m.note && <p className="text-xs text-muted-foreground italic mt-1">"{m.note}"</p>}
                 </div>
               </div>
-              {m.photo && (
-                <img src={m.photo} alt="" className="mt-2 rounded-xl w-full max-h-32 object-cover" />
+              {m.images && m.images.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {m.images.map((fid) => (
+                    <img
+                      key={fid}
+                      src={imageUrlMap[fid] || ""}
+                      alt=""
+                      className="rounded-xl w-16 h-16 object-cover"
+                    />
+                  ))}
+                </div>
               )}
               <div className="flex gap-3 mt-2 pt-2 border-t border-border">
                 <button onClick={() => startEdit(m)} className="text-xs text-muted-foreground hover:text-foreground">
                   ✏️ 编辑
                 </button>
-                <button onClick={() => handleDelete(m.id)} className="text-xs text-muted-foreground hover:text-destructive">
+                <button onClick={() => handleDelete(m._id!)} className="text-xs text-muted-foreground hover:text-destructive">
                   🗑 删除
                 </button>
               </div>
@@ -167,14 +226,14 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
               placeholder="写点什么…"
               className="w-full bg-secondary rounded-xl p-3 text-sm resize-none h-20 focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
-            <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-              📸 + 添加照片
-              <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
-            </label>
-            {photo && <img src={photo} alt="" className="rounded-xl w-16 h-16 object-cover" />}
+            <ImageUploader images={images} onChange={setImages} />
             <div className="flex gap-2">
-              <button onClick={handleSave} className="flex-1 bg-primary text-primary-foreground py-2 rounded-xl text-sm font-medium">
-                保存
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex-1 bg-primary text-primary-foreground py-2 rounded-xl text-sm font-medium disabled:opacity-60"
+              >
+                {saving ? "保存中…" : "保存"}
               </button>
               <button
                 onClick={() => { setEditing(null); setAdding(false); }}
@@ -184,7 +243,7 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
               </button>
               {editing && (
                 <button
-                  onClick={() => handleDelete(editing.id)}
+                  onClick={() => handleDelete(editing._id!)}
                   className="px-4 bg-destructive text-destructive-foreground py-2 rounded-xl text-sm"
                 >
                   删除
@@ -216,16 +275,24 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
 }
 
 export default function Memories() {
-  const [memories, setMemories] = useState(getMemories);
+  const [memories, setMemories] = useState<CloudMemory[]>([]);
+  const [loading, setLoading] = useState(true);
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const refresh = () => setMemories(getMemories());
+  const refresh = async () => {
+    const data = await getMemories();
+    setMemories(data);
+  };
+
+  useEffect(() => {
+    refresh().then(() => setLoading(false));
+  }, []);
 
   const memoryByDate = useMemo(() => {
-    const map: Record<string, Memory[]> = {};
+    const map: Record<string, CloudMemory[]> = {};
     memories.forEach((m) => {
       if (!map[m.date]) map[m.date] = [];
       map[m.date].push(m);
@@ -256,45 +323,45 @@ export default function Memories() {
       <PageWrapper>
         <h1 className="text-xl font-bold mb-4">📅 我们的回忆</h1>
 
-        {/* Month nav */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={prevMonth} className="text-lg px-3 py-1 hover:bg-secondary rounded-xl">◀</button>
           <span className="font-semibold text-base">{year}年{month + 1}月</span>
           <button onClick={nextMonth} className="text-lg px-3 py-1 hover:bg-secondary rounded-xl">▶</button>
         </div>
 
-        {/* Weekday headers */}
         <div className="grid grid-cols-7 gap-1 mb-1">
           {WEEKDAYS.map((w) => (
             <div key={w} className="text-center text-xs text-muted-foreground font-medium py-1">{w}</div>
           ))}
         </div>
 
-        {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-1 mb-4">
-          {calendarDays.map((day, idx) => {
-            if (day === null) return <div key={`empty-${idx}`} />;
-            const dateStr = formatDate(year, month, day);
-            const dayMemories = memoryByDate[dateStr];
-            const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-            const moodEmoji = dayMemories?.[0]?.mood;
+        {loading ? (
+          <div className="text-center text-muted-foreground py-8">加载中…</div>
+        ) : (
+          <div className="grid grid-cols-7 gap-1 mb-4">
+            {calendarDays.map((day, idx) => {
+              if (day === null) return <div key={`empty-${idx}`} />;
+              const dateStr = formatDate(year, month, day);
+              const dayMemories = memoryByDate[dateStr];
+              const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+              const moodEmoji = dayMemories?.[0]?.mood;
 
-            return (
-              <button
-                key={day}
-                onClick={() => setSelectedDate(dateStr)}
-                className={`aspect-square rounded-xl flex flex-col items-center justify-center text-xs transition-all hover:bg-primary/10 ${
-                  isToday ? "ring-2 ring-primary bg-primary/5" : ""
-                } ${dayMemories ? "bg-love-blush" : ""}`}
-              >
-                <span className="font-medium">{day}</span>
-                {moodEmoji && <span className="text-xs mt-0.5">{moodEmoji}</span>}
-              </button>
-            );
-          })}
-        </div>
+              return (
+                <button
+                  key={day}
+                  onClick={() => setSelectedDate(dateStr)}
+                  className={`aspect-square rounded-xl flex flex-col items-center justify-center text-xs transition-all hover:bg-primary/10 ${
+                    isToday ? "ring-2 ring-primary bg-primary/5" : ""
+                  } ${dayMemories ? "bg-love-blush" : ""}`}
+                >
+                  <span className="font-medium">{day}</span>
+                  {moodEmoji && <span className="text-xs mt-0.5">{moodEmoji}</span>}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-        {/* Legend */}
         <div className="text-center text-xs text-muted-foreground">
           点击日期查看或添加回忆 💕
         </div>

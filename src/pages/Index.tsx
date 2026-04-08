@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BottomNav from "@/components/BottomNav";
 import RecordDialog from "@/components/RecordDialog";
-import { getPending, clearPending, type PendingActivity } from "@/lib/store";
+import { getPending, clearPending, type CloudPending } from "@/lib/cloudStore";
 
 const actions = [
   {
@@ -29,12 +29,20 @@ const actions = [
 
 export default function Index() {
   const navigate = useNavigate();
-  const [pending, setPending] = useState<PendingActivity | null>(getPending);
+  const [pending, setPendingState] = useState<CloudPending | null>(null);
   const [showRecord, setShowRecord] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleDismissPending = () => {
-    clearPending();
-    setPending(null);
+  useEffect(() => {
+    getPending().then((p) => {
+      setPendingState(p);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleDismissPending = async () => {
+    await clearPending();
+    setPendingState(null);
   };
 
   return (
@@ -54,7 +62,7 @@ export default function Index() {
           </p>
         </motion.div>
 
-        {pending && (
+        {!loading && pending && (
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -110,9 +118,9 @@ export default function Index() {
           activity={pending.title}
           emoji={pending.emoji}
           onClose={() => setShowRecord(false)}
-          onSaved={() => {
-            clearPending();
-            setPending(null);
+          onSaved={async () => {
+            await clearPending();
+            setPendingState(null);
           }}
         />
       )}

@@ -14,7 +14,7 @@ import {
   type EnergyTag,
 } from "@/lib/recommend";
 import type { Activity } from "@/lib/activities";
-import { setPending } from "@/lib/store";
+import { setPending } from "@/lib/cloudStore";
 
 export default function RecommendResult() {
   const location = useLocation();
@@ -28,11 +28,10 @@ export default function RecommendResult() {
 
   const ctx = { mood, time, weather, energy };
 
-  const [results, setResults] = useState<Activity[]>(() =>
-    getSmartRecommendations(ctx)
-  );
+  const [results, setResults] = useState<Activity[]>(() => getSmartRecommendations(ctx));
   const [key, setKey] = useState(0);
   const [feedback, setFeedback] = useState<Record<number, "like" | "dislike">>({});
+  const [starting, setStarting] = useState<number | null>(null);
 
   const refresh = () => {
     setResults(getSmartRecommendations(ctx));
@@ -50,9 +49,11 @@ export default function RecommendResult() {
     setFeedback((f) => ({ ...f, [item.id]: "dislike" }));
   };
 
-  const startDate = (item: Activity) => {
+  const startDate = async (item: Activity) => {
+    if (starting !== null) return;
+    setStarting(item.id);
     addToHistory(item.title);
-    setPending({ emoji: item.emoji, title: item.title, startedAt: new Date().toISOString() });
+    await setPending({ emoji: item.emoji, title: item.title, startedAt: new Date().toISOString() });
     navigate("/");
   };
 
@@ -79,15 +80,10 @@ export default function RecommendResult() {
               <span className="text-2xl">{item.emoji}</span>
               <div className="flex-1">
                 <p className="font-semibold text-sm">{item.title}</p>
-                <p className="text-xs text-muted-foreground italic mt-0.5">
-                  "{item.lines[0]}"
-                </p>
+                <p className="text-xs text-muted-foreground italic mt-0.5">"{item.lines[0]}"</p>
                 <div className="flex gap-1 mt-1 flex-wrap">
                   {item.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[10px] bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-md"
-                    >
+                    <span key={tag} className="text-[10px] bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-md">
                       {tag}
                     </span>
                   ))}
@@ -98,24 +94,21 @@ export default function RecommendResult() {
               <div className="flex gap-2 text-lg">
                 <button
                   onClick={() => handleLike(item)}
-                  className={`hover:scale-125 transition-transform ${
-                    feedback[item.id] === "like" ? "scale-125" : ""
-                  }`}
+                  className={`hover:scale-125 transition-transform ${feedback[item.id] === "like" ? "scale-125" : ""}`}
                 >
                   👍
                 </button>
                 <button
                   onClick={() => handleDislike(item)}
-                  className={`hover:scale-125 transition-transform ${
-                    feedback[item.id] === "dislike" ? "scale-125" : ""
-                  }`}
+                  className={`hover:scale-125 transition-transform ${feedback[item.id] === "dislike" ? "scale-125" : ""}`}
                 >
                   👎
                 </button>
               </div>
               <button
                 onClick={() => startDate(item)}
-                className="text-sm bg-primary text-primary-foreground px-4 py-1.5 rounded-xl font-medium"
+                disabled={starting !== null}
+                className="text-sm bg-primary text-primary-foreground px-4 py-1.5 rounded-xl font-medium disabled:opacity-60"
               >
                 ❤️ 去做这个
               </button>
@@ -124,10 +117,7 @@ export default function RecommendResult() {
         ))}
       </motion.div>
 
-      <button
-        onClick={refresh}
-        className="mt-4 w-full text-center text-primary font-medium text-sm"
-      >
+      <button onClick={refresh} className="mt-4 w-full text-center text-primary font-medium text-sm">
         🎲 换一批推荐
       </button>
     </PageWrapper>

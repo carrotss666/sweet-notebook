@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
 import { getRandomActivity } from "@/lib/recommend";
-import { setPending } from "@/lib/store";
+import { setPending } from "@/lib/cloudStore";
 
 export default function RandomResult() {
   const navigate = useNavigate();
@@ -22,14 +22,17 @@ export default function RandomResult() {
 
   const [activity, setActivity] = useState(getNext);
   const [key, setKey] = useState(0);
+  const [starting, setStarting] = useState(false);
 
   const reroll = () => {
     setActivity(getNext());
     setKey((k) => k + 1);
   };
 
-  const start = () => {
-    setPending({ emoji: activity.emoji, title: activity.title, startedAt: new Date().toISOString() });
+  const start = async () => {
+    if (starting) return;
+    setStarting(true);
+    await setPending({ emoji: activity.emoji, title: activity.title, startedAt: new Date().toISOString() });
     navigate("/");
   };
 
@@ -49,24 +52,20 @@ export default function RandomResult() {
           >
             <span className="text-5xl block mb-3">{activity.emoji}</span>
             <h2 className="text-xl font-bold mb-2">{activity.title}</h2>
-            <p className="text-sm text-muted-foreground italic">
-              "{activity.line}"
-            </p>
+            <p className="text-sm text-muted-foreground italic">"{activity.line}"</p>
           </motion.div>
         </AnimatePresence>
 
-        <button
-          onClick={reroll}
-          className="mt-6 text-primary font-medium text-sm hover:underline"
-        >
+        <button onClick={reroll} className="mt-6 text-primary font-medium text-sm hover:underline">
           🔄 再抽一次
         </button>
 
         <button
           onClick={start}
-          className="mt-4 w-full max-w-xs mx-auto block bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft hover:shadow-hover transition-all"
+          disabled={starting}
+          className="mt-4 w-full max-w-xs mx-auto block bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft hover:shadow-hover transition-all disabled:opacity-60"
         >
-          ❤️ 开始这次约会
+          {starting ? "开始中…" : "❤️ 开始这次约会"}
         </button>
       </div>
     </PageWrapper>

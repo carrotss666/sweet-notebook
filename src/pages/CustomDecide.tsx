@@ -2,15 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
-import { setPending } from "@/lib/store";
+import { setPending } from "@/lib/cloudStore";
 
 export default function CustomDecide() {
   const navigate = useNavigate();
   const [text, setText] = useState("");
+  const [starting, setStarting] = useState(false);
 
-  const start = () => {
-    if (!text.trim()) return;
-    setPending({ emoji: "💕", title: text.trim(), startedAt: new Date().toISOString() });
+  const start = async () => {
+    if (!text.trim() || starting) return;
+    setStarting(true);
+    await setPending({ emoji: "💕", title: text.trim(), startedAt: new Date().toISOString() });
     navigate("/");
   };
 
@@ -29,11 +31,11 @@ export default function CustomDecide() {
       />
 
       <button
-        disabled={!text.trim()}
+        disabled={!text.trim() || starting}
         onClick={start}
         className="mt-6 w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft disabled:opacity-40 transition-all"
       >
-        ❤️ 开始这次约会
+        {starting ? "开始中…" : "❤️ 开始这次约会"}
       </button>
     </PageWrapper>
   );
