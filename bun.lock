@@ -5,6 +5,7 @@
     "": {
       "name": "vite_react_shadcn_ts",
       "dependencies": {
+        "@cloudbase/js-sdk": "^2.27.2",
         "@hookform/resolvers": "^3.10.0",
         "@radix-ui/react-accordion": "^1.2.11",
         "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -92,6 +93,44 @@
     "@babel/helper-validator-identifier": ["@babel/helper-validator-identifier@7.28.5", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@babel/helper-validator-identifier/-/helper-validator-identifier-7.28.5.tgz", {}, "sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q=="],
 
     "@babel/runtime": ["@babel/runtime@7.28.2", "", {}, "sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA=="],
+
+    "@cloudbase/adapter-interface": ["@cloudbase/adapter-interface@0.7.1", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/adapter-interface/-/adapter-interface-0.7.1.tgz", {}, "sha512-BjHTAvIMSLxbp26SeT6qLiSSBygz3kAVno/PMwwBwjgzVkVUvuZGVcvf1mhHxY/BjdRGLrd6X60OgvymV/aAUw=="],
+
+    "@cloudbase/adapter-wx_mp": ["@cloudbase/adapter-wx_mp@1.3.1", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/adapter-wx_mp/-/adapter-wx_mp-1.3.1.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.0", "web-streams-polyfill": "^4.0.0" } }, "sha512-rS0N1aD1a0zc421ds17/HzM4RChQ6T2ixMz87bhPJ1yveqJt/KUqYxiXJDWhZ803wwTmJs8aqNkgugsNusNhbg=="],
+
+    "@cloudbase/ai": ["@cloudbase/ai@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/ai/-/ai-2.27.2.tgz", { "dependencies": { "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2", "@mattiasbuelens/web-streams-adapter": "^0.1.0", "text-encoding-shim": "^1.0.5", "web-streams-polyfill": "^4.0.0" } }, "sha512-Q/lgDRfmeT27R2wkOXV9Y/xqqljeyol+F3BVRilTeNj4Ga/VYpOuy4HtHRfiqzAOP7Ch4Rw/DnGn3/fG7IWwDQ=="],
+
+    "@cloudbase/analytics": ["@cloudbase/analytics@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/analytics/-/analytics-2.27.2.tgz", { "dependencies": { "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2" } }, "sha512-hFOpzxPfoTGupE4MkkS/nlgzKRYJyH6HNgATRP0Y/z5BdUzxghzu9vEdmcobMjmcDf+hD8o3q9DzPtBgawvoNg=="],
+
+    "@cloudbase/apis": ["@cloudbase/apis@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/apis/-/apis-2.27.2.tgz", { "dependencies": { "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2" } }, "sha512-+eQBAN6a/Nr21+b5IJzXatbtD9rE1510wUo6csoQ2oMMlTK9OPldbtyE5Puc2PLPKEts/+7L8TejKnNygrl19A=="],
+
+    "@cloudbase/app": ["@cloudbase/app@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/app/-/app-2.27.2.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1", "@cloudbase/adapter-wx_mp": "^1.3.1", "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2" }, "peerDependencies": { "@cloudbase/signature-nodejs": ">=1.0.0", "jsonwebtoken": ">=8.0.0", "ws": "^8.18.0" }, "optionalPeers": ["@cloudbase/signature-nodejs", "jsonwebtoken", "ws"] }, "sha512-saztnX7zICJB7mUI3jb2q2vgM3nYgAg4gX/rPMchWSqzYSTvLZmg3V4BDCrMcqABpvILbTxHpH55rL8BwJBoOA=="],
+
+    "@cloudbase/auth": ["@cloudbase/auth@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/auth/-/auth-2.27.2.tgz", { "dependencies": { "@cloudbase/adapter-wx_mp": "^1.3.1", "@cloudbase/oauth": "2.27.2", "@cloudbase/utilities": "2.27.2" } }, "sha512-zSxRtWH5HsVi8nIyT8XByL0aOivGgqZB0YS3IO9zw6THzwUR/w/fdOrFAUDtX271htfb/dPrIRV7B/ByfUwdYQ=="],
+
+    "@cloudbase/cloudrun": ["@cloudbase/cloudrun@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/cloudrun/-/cloudrun-2.27.2.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1", "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2" } }, "sha512-v+hnv0XN5BEfscEmCfbi6JZtFomZb7ELnyINie4OJnWLd1pHDTwYezcSja3hZUwegoLxC24pidvBAP5bI9rvtg=="],
+
+    "@cloudbase/database": ["@cloudbase/database@0.11.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/database/-/database-0.11.0.tgz", { "dependencies": { "bson": "^7.1.1" } }, "sha512-WgUsGqeoUaxcpzQ3vE/HrEcpbuXOPZMTrSRJoZUz6LEJnW47hbcIGF+XHaJnMtcRRM/gbgNGDAxChLYi1TatTg=="],
+
+    "@cloudbase/functions": ["@cloudbase/functions@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/functions/-/functions-2.27.2.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1", "@cloudbase/cloudrun": "2.27.2", "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2" } }, "sha512-538GxB2dMOHPWJ++cwuPzxNNAjVzvBP9UZObuDxzTmmnTxezrFANe08kKhrFJiP+Ml7JU0Wu0cktfWPNpYUrLw=="],
+
+    "@cloudbase/js-sdk": ["@cloudbase/js-sdk@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/js-sdk/-/js-sdk-2.27.2.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1", "@cloudbase/ai": "2.27.2", "@cloudbase/analytics": "2.27.2", "@cloudbase/apis": "2.27.2", "@cloudbase/app": "2.27.2", "@cloudbase/auth": "2.27.2", "@cloudbase/cloudrun": "2.27.2", "@cloudbase/database": "0.11.0", "@cloudbase/functions": "2.27.2", "@cloudbase/model": "2.27.2", "@cloudbase/mysql": "2.27.2", "@cloudbase/realtime": "2.27.2", "@cloudbase/storage": "2.27.2", "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2" } }, "sha512-I9cdZmN6JJvcn0rvhcaETmJRMvs+b5t+SLhM+eOPuFLhYf6bBze9foeSn4XoZpga5JXNV695d5lCjz2zrzDMsg=="],
+
+    "@cloudbase/model": ["@cloudbase/model@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/model/-/model-2.27.2.tgz", { "dependencies": { "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2", "@cloudbase/wx-cloud-client-sdk": "^1.5.0" } }, "sha512-Jzqh3hWP7mwKCMxFr5jipXabULfbVqlFQ1Eu6maRE0v7rzib7NyIDI3jg539YfDeuSR9aQJbd059M24ObcD32g=="],
+
+    "@cloudbase/mysql": ["@cloudbase/mysql@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/mysql/-/mysql-2.27.2.tgz", { "dependencies": { "@cloudbase/types": "2.20.3", "@cloudbase/utilities": "2.20.3", "@cloudbase/wx-cloud-client-sdk": "^1.7.1" } }, "sha512-83reb1WPiOHxkAEXXnTenluxYwzWM30V83j7Q2pPizU2E8HWOD2mGXCSdyCa5gb8gXnb2sJXpg5i/cw4hJ9nng=="],
+
+    "@cloudbase/oauth": ["@cloudbase/oauth@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/oauth/-/oauth-2.27.2.tgz", { "dependencies": { "@cloudbase/utilities": "2.27.2" } }, "sha512-QYyHByw5jT8SYLA7FVhAZ/HWgN9SgQQJMuj5jUoU5npdPPDdyba2LJ+H1CqjOipLAkc+6jbaxH0j/SfAXqWrrA=="],
+
+    "@cloudbase/realtime": ["@cloudbase/realtime@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/realtime/-/realtime-2.27.2.tgz", { "dependencies": { "@cloudbase/types": "2.27.2", "lodash": "^4.17.21" } }, "sha512-qRWyE3Yh+R4c0tLJKHoRJ+9qN7ldHiZK62jDMfCF5O1HLOUfT7ypPClQUf+l73UutW7q9xZe+1D2g1FoRtG+cQ=="],
+
+    "@cloudbase/storage": ["@cloudbase/storage@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/storage/-/storage-2.27.2.tgz", { "dependencies": { "@cloudbase/types": "2.27.2", "@cloudbase/utilities": "2.27.2" } }, "sha512-E4hoy5pUyt494K+g9WC/a/kOuWG39SmEn4VdWdK13UfoHmZ5D6BY495WxZZBPdmR7siV0frcOnuah4xquNVxAA=="],
+
+    "@cloudbase/types": ["@cloudbase/types@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/types/-/types-2.27.2.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1" } }, "sha512-jfRy7PAXjC8YjB6kObRHhe/W9yReXxc43aqgB4ahei2Z6L7k8/Vn5ufEfnQ/C4v0ohc502p002Gga1N9hBNTRA=="],
+
+    "@cloudbase/utilities": ["@cloudbase/utilities@2.27.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/utilities/-/utilities-2.27.2.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1", "@cloudbase/types": "2.27.2", "jwt-decode": "^3.1.2" } }, "sha512-8AhQVlFpdawiGRA8RVN1lSDX4MFOF+DOSNzaxcK/yprmmB53PeLaCyRqUMRLnWlBalgcy8Bm06I8tlLUa6gQaw=="],
+
+    "@cloudbase/wx-cloud-client-sdk": ["@cloudbase/wx-cloud-client-sdk@1.8.6", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/wx-cloud-client-sdk/-/wx-cloud-client-sdk-1.8.6.tgz", { "dependencies": { "@cloudbase/adapter-wx_mp": "^1.2.1", "core-js-pure": "^3.45.0" } }, "sha512-NjT6lUcWHDYbc4XFnGocydRKV+Iu0oWSJ6XUQ968jCTaqln1wPgFQgJixiswLvpjGn60LuelE27N50HrAnaUYw=="],
 
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.25.0", "", { "os": "aix", "cpu": "ppc64" }, "sha512-O7vun9Sf8DFjH2UtqK8Ku3LkquL9SZL8OLY1T5NZkA34+wG3OQF7cl4Ql8vdNzM6fzBbYfLaiRLIOZ+2FOCgBQ=="],
 
@@ -190,6 +229,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.25", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ=="],
+
+    "@mattiasbuelens/web-streams-adapter": ["@mattiasbuelens/web-streams-adapter@0.1.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@mattiasbuelens/web-streams-adapter/-/web-streams-adapter-0.1.0.tgz", {}, "sha512-oV4PyZfwJNtmFWhvlJLqYIX1Nn22ML8FZpS16ZUKv0hg7414xV1fjsGqxQzLT2dyK92TKxsJSwMOd7VNHAtPmA=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
@@ -505,6 +546,8 @@
 
     "browserslist": ["browserslist@4.25.1", "", { "dependencies": { "caniuse-lite": "^1.0.30001726", "electron-to-chromium": "^1.5.173", "node-releases": "^2.0.19", "update-browserslist-db": "^1.1.3" }, "bin": "cli.js" }, "sha512-KGj0KoOMXLpSNkkEI6Z6mShmQy0bc1I+T7K9N81k4WWMrfz+6fQ6es80B/YLAeRoKvjYE1YSHHOW1qe9xIVzHw=="],
 
+    "bson": ["bson@7.2.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/bson/-/bson-7.2.0.tgz", {}, "sha512-YCEo7KjMlbNlyHhz7zAZNDpIpQbd+wOEHJYezv0nMYTn4x31eIUM2yomNNubclAt63dObUzKHWsBLJ9QcZNSnQ=="],
+
     "cac": ["cac@6.7.14", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/cac/-/cac-6.7.14.tgz", {}, "sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ=="],
 
     "call-bind-apply-helpers": ["call-bind-apply-helpers@1.0.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/call-bind-apply-helpers/-/call-bind-apply-helpers-1.0.2.tgz", { "dependencies": { "es-errors": "^1.3.0", "function-bind": "^1.1.2" } }, "sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ=="],
@@ -538,6 +581,8 @@
     "commander": ["commander@4.1.1", "", {}, "sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA=="],
 
     "concat-map": ["concat-map@0.0.1", "", {}, "sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg=="],
+
+    "core-js-pure": ["core-js-pure@3.49.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/core-js-pure/-/core-js-pure-3.49.0.tgz", {}, "sha512-XM4RFka59xATyJv/cS3O3Kml72hQXUeGRuuTmMYFxwzc9/7C8OYTaIR/Ji+Yt8DXzsFLNhat15cE/JP15HrCgw=="],
 
     "cross-spawn": ["cross-spawn@7.0.6", "", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
 
@@ -776,6 +821,8 @@
     "json-schema-traverse": ["json-schema-traverse@0.4.1", "", {}, "sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg=="],
 
     "json-stable-stringify-without-jsonify": ["json-stable-stringify-without-jsonify@1.0.1", "", {}, "sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw=="],
+
+    "jwt-decode": ["jwt-decode@3.1.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/jwt-decode/-/jwt-decode-3.1.2.tgz", {}, "sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A=="],
 
     "keyv": ["keyv@4.5.4", "", { "dependencies": { "json-buffer": "3.0.1" } }, "sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw=="],
 
@@ -1017,6 +1064,8 @@
 
     "tailwindcss-animate": ["tailwindcss-animate@1.0.7", "", { "peerDependencies": { "tailwindcss": ">=3.0.0 || insiders" } }, "sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA=="],
 
+    "text-encoding-shim": ["text-encoding-shim@1.0.5", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/text-encoding-shim/-/text-encoding-shim-1.0.5.tgz", {}, "sha512-H7yYW+jRn4yhu60ygZ2f/eMhXPITRt4QSUTKzLm+eCaDsdX8avmgWpmtmHAzesjBVUTAypz9odu5RKUjX5HNYA=="],
+
     "thenify": ["thenify@3.3.1", "", { "dependencies": { "any-promise": "^1.0.0" } }, "sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw=="],
 
     "thenify-all": ["thenify-all@1.6.0", "", { "dependencies": { "thenify": ">= 3.1.0 < 4" } }, "sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA=="],
@@ -1083,6 +1132,8 @@
 
     "w3c-xmlserializer": ["w3c-xmlserializer@4.0.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/w3c-xmlserializer/-/w3c-xmlserializer-4.0.0.tgz", { "dependencies": { "xml-name-validator": "^4.0.0" } }, "sha512-d+BFHzbiCx6zGfz0HyQ6Rg69w9k19nviJspaj4yNscGjrHu94sVP+aRm75yEbCh+r2/yR+7q6hux9LVtbuTGBw=="],
 
+    "web-streams-polyfill": ["web-streams-polyfill@4.2.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/web-streams-polyfill/-/web-streams-polyfill-4.2.0.tgz", {}, "sha512-0rYDzGOh9EZpig92umN5g5D/9A1Kff7k0/mzPSSCY8jEQeYkgRMoY7LhbXtUCWzLCMX0TUE9aoHkjFNB7D9pfA=="],
+
     "webidl-conversions": ["webidl-conversions@7.0.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/webidl-conversions/-/webidl-conversions-7.0.0.tgz", {}, "sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g=="],
 
     "whatwg-encoding": ["whatwg-encoding@2.0.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/whatwg-encoding/-/whatwg-encoding-2.0.0.tgz", { "dependencies": { "iconv-lite": "0.6.3" } }, "sha512-p41ogyeMUrw3jWclHWTQg1k05DSVXPLcVxRTYsXUk+ZooOCZLcoYgPZ/HL/D/N+uQPOtcp1me1WhBEaX02mhWg=="],
@@ -1112,6 +1163,10 @@
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 
     "zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
+
+    "@cloudbase/mysql/@cloudbase/types": ["@cloudbase/types@2.20.3", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/types/-/types-2.20.3.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1" } }, "sha512-oBFj5hJ4eFc32OoOiE8UopL5lDacZReg56yNlbPGhoRLGbNe2Wk4QV+VeIo2n/TtVzo6Ctb7hQGmJ+peECIiuQ=="],
+
+    "@cloudbase/mysql/@cloudbase/utilities": ["@cloudbase/utilities@2.20.3", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@cloudbase/utilities/-/utilities-2.20.3.tgz", { "dependencies": { "@cloudbase/adapter-interface": "^0.7.1", "@cloudbase/types": "2.20.3", "jwt-decode": "^3.1.2" } }, "sha512-SjRok91CfqiEHk1Mjzc9uW61CewssW3c8pjs+EPHb2et/C764W5mt3Gr2SP5yEw23X1HS50uNHXfWZu7ZbG4AQ=="],
 
     "@eslint-community/eslint-utils/eslint-visitor-keys": ["eslint-visitor-keys@3.4.3", "", {}, "sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag=="],
 
