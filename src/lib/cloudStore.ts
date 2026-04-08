@@ -41,7 +41,7 @@ export async function uploadImages(files: File[]): Promise<string[]> {
     const cloudPath = `images/${getCoupleId()}/${Date.now()}-${Math.random().toString(36).slice(2, 6)}-${file.name}`;
     const res = await app.uploadFile({
       cloudPath,
-      filePath: file,
+      filePath: file as any,
     });
     fileIDs.push(res.fileID);
   }

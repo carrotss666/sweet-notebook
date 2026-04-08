@@ -2,33 +2,35 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
-import { saveMemory, generateId } from "@/lib/store";
+import { saveMemory, uploadImages } from "@/lib/cloudStore";
+import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
 
 export default function AddMemory() {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [note, setNote] = useState("");
-  const [photo, setPhoto] = useState<string | undefined>();
+  const [images, setImages] = useState<ImageItem[]>([]);
+  const [saving, setSaving] = useState(false);
 
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result as string);
-    reader.readAsDataURL(file);
-  };
+  const handleSave = async () => {
+    if (!text.trim() || saving) return;
+    try {
+      setSaving(true);
+      const newFiles = images.filter((img) => img.file).map((img) => img.file!);
+      const fileIDs = newFiles.length > 0 ? await uploadImages(newFiles) : [];
 
-  const handleSave = () => {
-    if (!text.trim()) return;
-    saveMemory({
-      id: generateId(),
-      date: new Date().toISOString().slice(0, 10).replace(/-/g, "."),
-      activity: text.trim(),
-      emoji: "💕",
-      note,
-      photo,
-    });
-    navigate("/save-success");
+      await saveMemory({
+        date: new Date().toISOString().slice(0, 10).replace(/-/g, "."),
+        activity: text.trim(),
+        emoji: "💕",
+        note,
+        images: fileIDs,
+      });
+      navigate("/save-success");
+    } catch (e) {
+      console.error("Save failed:", e);
+      setSaving(false);
+    }
   };
 
   return (
@@ -52,20 +54,14 @@ export default function AddMemory() {
         className="w-full bg-card rounded-2xl p-4 text-sm resize-none h-20 focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-soft mb-3"
       />
 
-      <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer mb-2">
-        📸 + 上传图片（可选）
-        <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
-      </label>
-      {photo && (
-        <img src={photo} alt="preview" className="rounded-xl w-20 h-20 object-cover mb-3" />
-      )}
+      <ImageUploader images={images} onChange={setImages} />
 
       <button
-        disabled={!text.trim()}
+        disabled={!text.trim() || saving}
         onClick={handleSave}
         className="mt-4 w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft disabled:opacity-40 transition-all"
       >
-        ❤️ 保存回忆
+        {saving ? "保存中…" : "❤️ 保存回忆"}
       </button>
     </PageWrapper>
   );
