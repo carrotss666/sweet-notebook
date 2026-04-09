@@ -44,10 +44,15 @@ export default function Index() {
   const [recordTask, setRecordTask] = useState<CloudTask | null>(null);
 
   useEffect(() => {
-    getTasks().then((t) => {
-      setTasks(t);
-      setLoading(false);
-    });
+    getTasks()
+      .then((t) => {
+        setTasks(t || []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setTasks([]);
+        setLoading(false);
+      });
   }, []);
 
   const pendingTasks = tasks.filter((t) => t.status === "pending");
