@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { saveMemory, clearPending, uploadImages } from "@/lib/cloudStore";
+import { saveMemory, uploadImages } from "@/lib/cloudStore";
 import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
 
 interface Props {
@@ -36,7 +36,7 @@ export default function RecordDialog({ activity, emoji, onClose, onSaved }: Prop
         images: fileIDs,
         mood,
       });
-      await clearPending();
+      // Task status update handled by parent via onSaved
       onSaved?.();
       navigate("/save-success");
     } catch (e) {

@@ -30,6 +30,17 @@ export interface CloudPending {
   startedAt: string;
 }
 
+export interface CloudTask {
+  _id?: string;
+  coupleId: string;
+  title: string;
+  emoji: string;
+  source: "random" | "recommend" | "manual";
+  status: "pending" | "done";
+  scheduledAt?: string; // "today" | "weekend" | ISO date | undefined (ASAP)
+  createdAt: number;
+}
+
 // --- Image Operations ---
 
 export async function uploadImages(files: File[]): Promise<string[]> {
@@ -199,4 +210,49 @@ export async function clearPending(): Promise<void> {
   for (const doc of res.data) {
     await db.collection("pending").doc((doc as any)._id).remove();
   }
+}
+
+// --- Tasks ---
+
+export async function getTasks(): Promise<CloudTask[]> {
+  await ensureAuth();
+  const db = getDb();
+  const coupleId = getCoupleId();
+  const res = await db
+    .collection("tasks")
+    .where({ coupleId })
+    .orderBy("createdAt", "desc")
+    .limit(100)
+    .get();
+  return res.data as CloudTask[];
+}
+
+export async function addTask(data: {
+  title: string;
+  emoji: string;
+  source: "random" | "recommend" | "manual";
+  scheduledAt?: string;
+}): Promise<string> {
+  await ensureAuth();
+  const db = getDb();
+  const coupleId = getCoupleId();
+  const res = await db.collection("tasks").add({
+    ...data,
+    coupleId,
+    status: "pending",
+    createdAt: Date.now(),
+  });
+  return res.id;
+}
+
+export async function updateTaskStatus(id: string, status: "pending" | "done"): Promise<void> {
+  await ensureAuth();
+  const db = getDb();
+  await db.collection("tasks").doc(id).update({ status });
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  await ensureAuth();
+  const db = getDb();
+  await db.collection("tasks").doc(id).remove();
 }
