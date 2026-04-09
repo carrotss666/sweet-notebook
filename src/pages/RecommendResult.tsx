@@ -14,7 +14,8 @@ import {
   type EnergyTag,
 } from "@/lib/recommend";
 import type { Activity } from "@/lib/activities";
-import { setPending } from "@/lib/cloudStore";
+import { addTask } from "@/lib/cloudStore";
+import SchedulePicker from "@/components/SchedulePicker";
 
 export default function RecommendResult() {
   const location = useLocation();
@@ -32,11 +33,13 @@ export default function RecommendResult() {
   const [key, setKey] = useState(0);
   const [feedback, setFeedback] = useState<Record<number, "like" | "dislike">>({});
   const [starting, setStarting] = useState<number | null>(null);
+  const [schedules, setSchedules] = useState<Record<number, string | undefined>>({});
 
   const refresh = () => {
     setResults(getSmartRecommendations(ctx));
     setKey((k) => k + 1);
     setFeedback({});
+    setSchedules({});
   };
 
   const handleLike = (item: Activity) => {
@@ -53,7 +56,12 @@ export default function RecommendResult() {
     if (starting !== null) return;
     setStarting(item.id);
     addToHistory(item.title);
-    await setPending({ emoji: item.emoji, title: item.title, startedAt: new Date().toISOString() });
+    await addTask({
+      emoji: item.emoji,
+      title: item.title,
+      source: "recommend",
+      scheduledAt: schedules[item.id],
+    });
     navigate("/");
   };
 
@@ -90,6 +98,12 @@ export default function RecommendResult() {
                 </div>
               </div>
             </div>
+            <div className="mt-3">
+              <SchedulePicker
+                value={schedules[item.id]}
+                onChange={(v) => setSchedules((s) => ({ ...s, [item.id]: v }))}
+              />
+            </div>
             <div className="flex items-center justify-between mt-3">
               <div className="flex gap-2 text-lg">
                 <button
@@ -110,7 +124,7 @@ export default function RecommendResult() {
                 disabled={starting !== null}
                 className="text-sm bg-primary text-primary-foreground px-4 py-1.5 rounded-xl font-medium disabled:opacity-60"
               >
-                ❤️ 去做这个
+                📋 加入待办
               </button>
             </div>
           </motion.div>

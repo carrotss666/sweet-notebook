@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
 import { getRandomActivity } from "@/lib/recommend";
-import { setPending } from "@/lib/cloudStore";
+import { addTask } from "@/lib/cloudStore";
+import SchedulePicker from "@/components/SchedulePicker";
 
 export default function RandomResult() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export default function RandomResult() {
   const [activity, setActivity] = useState(getNext);
   const [key, setKey] = useState(0);
   const [starting, setStarting] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState<string | undefined>(undefined);
 
   const reroll = () => {
     setActivity(getNext());
@@ -32,7 +34,12 @@ export default function RandomResult() {
   const start = async () => {
     if (starting) return;
     setStarting(true);
-    await setPending({ emoji: activity.emoji, title: activity.title, startedAt: new Date().toISOString() });
+    await addTask({
+      emoji: activity.emoji,
+      title: activity.title,
+      source: "random",
+      scheduledAt,
+    });
     navigate("/");
   };
 
@@ -60,12 +67,16 @@ export default function RandomResult() {
           🔄 再抽一次
         </button>
 
+        <div className="mt-4 max-w-xs mx-auto">
+          <SchedulePicker value={scheduledAt} onChange={setScheduledAt} />
+        </div>
+
         <button
           onClick={start}
           disabled={starting}
           className="mt-4 w-full max-w-xs mx-auto block bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft hover:shadow-hover transition-all disabled:opacity-60"
         >
-          {starting ? "开始中…" : "❤️ 开始这次约会"}
+          {starting ? "添加中…" : "📋 加入待办"}
         </button>
       </div>
     </PageWrapper>

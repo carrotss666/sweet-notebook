@@ -2,17 +2,24 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
-import { setPending } from "@/lib/cloudStore";
+import { addTask } from "@/lib/cloudStore";
+import SchedulePicker from "@/components/SchedulePicker";
 
 export default function CustomDecide() {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [starting, setStarting] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState<string | undefined>(undefined);
 
   const start = async () => {
     if (!text.trim() || starting) return;
     setStarting(true);
-    await setPending({ emoji: "💕", title: text.trim(), startedAt: new Date().toISOString() });
+    await addTask({
+      emoji: "💕",
+      title: text.trim(),
+      source: "manual",
+      scheduledAt,
+    });
     navigate("/");
   };
 
@@ -30,12 +37,16 @@ export default function CustomDecide() {
         className="w-full bg-card rounded-2xl p-4 text-sm resize-none h-28 focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-soft transition-all"
       />
 
+      <div className="mt-4">
+        <SchedulePicker value={scheduledAt} onChange={setScheduledAt} />
+      </div>
+
       <button
         disabled={!text.trim() || starting}
         onClick={start}
         className="mt-6 w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft disabled:opacity-40 transition-all"
       >
-        {starting ? "开始中…" : "❤️ 开始这次约会"}
+        {starting ? "添加中…" : "📋 加入待办"}
       </button>
     </PageWrapper>
   );
