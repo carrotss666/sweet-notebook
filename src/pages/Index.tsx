@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BottomNav from "@/components/BottomNav";
 import RecordDialog from "@/components/RecordDialog";
-import { getPending, clearPending, type CloudPending } from "@/lib/cloudStore";
+import { getTasks, updateTaskStatus, deleteTask, type CloudTask } from "@/lib/cloudStore";
 
 const actions = [
   {
@@ -27,22 +27,41 @@ const actions = [
   },
 ];
 
+function formatSchedule(s?: string): string {
+  if (!s) return "尽快";
+  if (s === "today") return "今天";
+  if (s === "weekend") return "周末";
+  return s;
+}
+
+const MAX_VISIBLE = 3;
+
 export default function Index() {
   const navigate = useNavigate();
-  const [pending, setPendingState] = useState<CloudPending | null>(null);
-  const [showRecord, setShowRecord] = useState(false);
+  const [tasks, setTasks] = useState<CloudTask[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const [recordTask, setRecordTask] = useState<CloudTask | null>(null);
 
   useEffect(() => {
-    getPending().then((p) => {
-      setPendingState(p);
+    getTasks().then((t) => {
+      setTasks(t);
       setLoading(false);
     });
   }, []);
 
-  const handleDismissPending = async () => {
-    await clearPending();
-    setPendingState(null);
+  const pendingTasks = tasks.filter((t) => t.status === "pending");
+  const visibleTasks = expanded ? pendingTasks : pendingTasks.slice(0, MAX_VISIBLE);
+  const hiddenCount = pendingTasks.length - MAX_VISIBLE;
+
+  const handleDone = async (task: CloudTask) => {
+    await updateTaskStatus(task._id!, "done");
+    setTasks((prev) => prev.map((t) => (t._id === task._id ? { ...t, status: "done" } : t)));
+  };
+
+  const handleDelete = async (task: CloudTask) => {
+    await deleteTask(task._id!);
+    setTasks((prev) => prev.filter((t) => t._id !== task._id));
   };
 
   return (
@@ -62,30 +81,61 @@ export default function Index() {
           </p>
         </motion.div>
 
-        {!loading && pending && (
+        {/* Tasks List */}
+        {!loading && pendingTasks.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="love-card mb-4 border-2 border-primary/30"
+            className="mb-4"
           >
-            <p className="text-sm font-medium text-primary mb-1">💕 有一段回忆待记录</p>
-            <p className="text-base font-semibold">
-              {pending.emoji} {pending.title}
-            </p>
-            <div className="flex gap-2 mt-3">
-              <button
-                onClick={() => setShowRecord(true)}
-                className="flex-1 bg-primary text-primary-foreground py-2 rounded-xl text-sm font-medium"
-              >
-                去记录
-              </button>
-              <button
-                onClick={handleDismissPending}
-                className="px-4 bg-secondary text-secondary-foreground py-2 rounded-xl text-sm font-medium"
-              >
-                取消
-              </button>
+            <p className="text-sm font-semibold text-primary mb-2">📋 待办事项（{pendingTasks.length}）</p>
+            <div className="space-y-2">
+              {visibleTasks.map((task) => (
+                <div
+                  key={task._id}
+                  className="love-card flex items-center gap-3 border border-border/50"
+                >
+                  <span className="text-xl">{task.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{task.title}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      ⏰ {formatSchedule(task.scheduledAt)}
+                      {task.source === "random" && " · 🎰 随机"}
+                      {task.source === "recommend" && " · ✨ 推荐"}
+                      {task.source === "manual" && " · ✍️ 手动"}
+                    </p>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button
+                      onClick={() => setRecordTask(task)}
+                      className="text-xs bg-primary text-primary-foreground px-2.5 py-1 rounded-lg"
+                    >
+                      记录
+                    </button>
+                    <button
+                      onClick={() => handleDone(task)}
+                      className="text-xs bg-secondary text-secondary-foreground px-2.5 py-1 rounded-lg"
+                    >
+                      ✅
+                    </button>
+                    <button
+                      onClick={() => handleDelete(task)}
+                      className="text-xs text-muted-foreground px-1.5 py-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
+            {hiddenCount > 0 && (
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="mt-2 w-full text-center text-xs text-primary font-medium"
+              >
+                {expanded ? "收起" : `还有 ${hiddenCount} 条待办 ▾`}
+              </button>
+            )}
           </motion.div>
         )}
 
@@ -113,14 +163,15 @@ export default function Index() {
       </PageWrapper>
       <BottomNav />
 
-      {showRecord && pending && (
+      {recordTask && (
         <RecordDialog
-          activity={pending.title}
-          emoji={pending.emoji}
-          onClose={() => setShowRecord(false)}
+          activity={recordTask.title}
+          emoji={recordTask.emoji}
+          onClose={() => setRecordTask(null)}
           onSaved={async () => {
-            await clearPending();
-            setPendingState(null);
+            await updateTaskStatus(recordTask._id!, "done");
+            setTasks((prev) => prev.map((t) => (t._id === recordTask._id ? { ...t, status: "done" } : t)));
+            setRecordTask(null);
           }}
         />
       )}
