@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BottomNav from "@/components/BottomNav";
@@ -37,6 +38,7 @@ interface DayDetailProps {
 }
 
 function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
+  const navigate = useNavigate();
   const [editing, setEditing] = useState<CloudMemory | null>(null);
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");
@@ -173,7 +175,7 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
                 <span className="text-lg">{m.mood || m.emoji}</span>
                 <div className="flex-1">
                   <p className="font-semibold text-sm">{m.activity}</p>
-                  {m.note && <p className="text-xs text-muted-foreground italic mt-1">"{m.note}"</p>}
+                  {m.note && <p className="text-xs text-muted-foreground italic mt-1" style={{ whiteSpace: "pre-wrap" }}>"{m.note}"</p>}
                 </div>
               </div>
               {m.images && m.images.length > 0 && (
@@ -189,6 +191,9 @@ function DayDetail({ date, memories, onClose, onRefresh }: DayDetailProps) {
                 </div>
               )}
               <div className="flex gap-3 mt-2 pt-2 border-t border-border">
+                <button onClick={() => navigate(`/memory/${m._id}`)} className="text-xs text-muted-foreground hover:text-foreground">
+                  📖 详情
+                </button>
                 <button onClick={() => startEdit(m)} className="text-xs text-muted-foreground hover:text-foreground">
                   ✏️ 编辑
                 </button>

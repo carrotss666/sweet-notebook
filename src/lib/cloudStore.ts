@@ -10,6 +10,7 @@ export interface CloudMemory {
   note: string;
   images: string[]; // fileID array
   mood?: string;
+  authorId?: string;
   createdAt: number;
 }
 
@@ -37,8 +38,25 @@ export interface CloudTask {
   emoji: string;
   source: "random" | "recommend" | "manual";
   status: "pending" | "done";
-  scheduledAt?: string; // "today" | "weekend" | ISO date | undefined (ASAP)
+  scheduledAt?: string;
   createdAt: number;
+}
+
+export interface CloudComment {
+  _id?: string;
+  coupleId: string;
+  memoryId: string;
+  content: string;
+  authorId: string;
+  createdAt: number;
+}
+
+// --- Helper: get current user's anonymous uid ---
+export async function getCurrentUid(): Promise<string> {
+  await ensureAuth();
+  const auth = getApp().auth({ persistence: "local" });
+  const state = await auth.getLoginState();
+  return state?.user?.uid || "unknown";
 }
 
 // --- Image Operations ---
@@ -89,13 +107,22 @@ export async function getMemories(): Promise<CloudMemory[]> {
   return res.data as CloudMemory[];
 }
 
+export async function getMemoryById(id: string): Promise<CloudMemory | null> {
+  await ensureAuth();
+  const db = getDb();
+  const res = await db.collection("memories").doc(id).get();
+  return (res.data?.[0] as CloudMemory) || null;
+}
+
 export async function saveMemory(m: Omit<CloudMemory, "_id" | "coupleId" | "createdAt">): Promise<string> {
   await ensureAuth();
   const db = getDb();
   const coupleId = getCoupleId();
+  const authorId = await getCurrentUid();
   const res = await db.collection("memories").add({
     ...m,
     coupleId,
+    authorId: m.authorId || authorId,
     createdAt: Date.now(),
   });
   return res.id;
@@ -114,6 +141,42 @@ export async function deleteMemory(id: string): Promise<void> {
   await db.collection("memories").doc(id).remove();
 }
 
+// --- Comments ---
+
+export async function getComments(memoryId: string): Promise<CloudComment[]> {
+  await ensureAuth();
+  const db = getDb();
+  const coupleId = getCoupleId();
+  const res = await db
+    .collection("comments")
+    .where({ coupleId, memoryId })
+    .orderBy("createdAt", "asc")
+    .limit(500)
+    .get();
+  return res.data as CloudComment[];
+}
+
+export async function addComment(memoryId: string, content: string): Promise<string> {
+  await ensureAuth();
+  const db = getDb();
+  const coupleId = getCoupleId();
+  const authorId = await getCurrentUid();
+  const res = await db.collection("comments").add({
+    memoryId,
+    coupleId,
+    content,
+    authorId,
+    createdAt: Date.now(),
+  });
+  return res.id;
+}
+
+export async function deleteComment(id: string): Promise<void> {
+  await ensureAuth();
+  const db = getDb();
+  await db.collection("comments").doc(id).remove();
+}
+
 // --- Checklist ---
 
 export async function getChecklist(): Promise<CloudChecklistItem[]> {
@@ -127,7 +190,6 @@ export async function getChecklist(): Promise<CloudChecklistItem[]> {
     .limit(1000)
     .get();
 
-  // If empty, seed with defaults
   if (res.data.length === 0) {
     const defaults = [
       { emoji: "🍜", title: "去没吃过的店", rating: 4 },
@@ -194,7 +256,6 @@ export async function setPending(data: { emoji: string; title: string; startedAt
   await ensureAuth();
   const db = getDb();
   const coupleId = getCoupleId();
-  // Clear existing first
   await clearPending();
   await db.collection("pending").add({
     ...data,
