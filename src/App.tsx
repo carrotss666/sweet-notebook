@@ -16,6 +16,7 @@ import RecommendResult from "./pages/RecommendResult";
 import CustomDecide from "./pages/CustomDecide";
 import Checklist from "./pages/Checklist";
 import Memories from "./pages/Memories";
+import MemoryDetail from "./pages/MemoryDetail";
 import AddMemory from "./pages/AddMemory";
 import NotFound from "./pages/NotFound";
 
@@ -49,6 +50,7 @@ const App = () => {
             <Route path="/custom" element={<CustomDecide />} />
             <Route path="/checklist" element={<Checklist />} />
             <Route path="/memories" element={<Memories />} />
+            <Route path="/memory/:id" element={<MemoryDetail />} />
             <Route path="/add-memory" element={<AddMemory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
