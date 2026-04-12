@@ -7,8 +7,10 @@ import {
   addChecklistItem,
   removeChecklistItem,
   updateChecklistItem,
+  addTask,
   type CloudChecklistItem,
 } from "@/lib/cloudStore";
+import { toast } from "sonner";
 
 const EMOJI_OPTIONS = ["🎯", "🍜", "🚶", "📸", "🎬", "🧁", "🌃", "🎨", "☕", "🎵", "🛒", "📖", "🍳", "🏃", "🌸"];
 
@@ -122,6 +124,11 @@ export default function Checklist() {
     await refresh();
   };
 
+  const handleAddToTask = async (item: CloudChecklistItem) => {
+    await addTask({ title: item.title, emoji: item.emoji, source: "manual" });
+    toast.success("已加入待办 ✅");
+  };
+
   return (
     <>
       <PageWrapper>
@@ -172,6 +179,12 @@ export default function Checklist() {
                       <Stars rating={item.rating} onChange={(r) => handleEdit(item._id!, { ...item, rating: r })} />
                     </div>
                     <div className="flex gap-3 mt-2 pt-2 border-t border-border">
+                      <button
+                        onClick={() => handleAddToTask(item)}
+                        className="text-xs text-primary hover:text-primary/80 font-medium"
+                      >
+                        📋 加入待办
+                      </button>
                       <button
                         onClick={() => { setEditingId(item._id!); setShowAdd(false); }}
                         className="text-xs text-muted-foreground hover:text-foreground"

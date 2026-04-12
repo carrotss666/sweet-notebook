@@ -16,8 +16,10 @@ import {
   addComment,
   deleteComment,
   getCurrentUid,
+  getCoupleProfiles,
   type CloudMemory,
   type CloudComment,
+  type CloudUserProfile,
 } from "@/lib/cloudStore";
 
 const MOODS = ["😊", "😐", "😍", "😢", "🤩"];
@@ -30,13 +32,12 @@ export default function MemoryDetail() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUid, setCurrentUid] = useState("");
+  const [profiles, setProfiles] = useState<CloudUserProfile[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Comment input
   const [commentText, setCommentText] = useState("");
   const [sendingComment, setSendingComment] = useState(false);
 
-  // Edit mode
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editNote, setEditNote] = useState("");
@@ -46,14 +47,16 @@ export default function MemoryDetail() {
 
   const refresh = async () => {
     if (!id) return;
-    const [mem, cmts, uid] = await Promise.all([
+    const [mem, cmts, uid, profs] = await Promise.all([
       getMemoryById(id),
       getComments(id),
       getCurrentUid(),
+      getCoupleProfiles(),
     ]);
     setMemory(mem);
     setComments(cmts);
     setCurrentUid(uid);
+    setProfiles(profs);
     if (mem?.images && mem.images.length > 0) {
       const urls = await getImageUrls(mem.images);
       setImageUrls(urls);
@@ -64,6 +67,14 @@ export default function MemoryDetail() {
   };
 
   useEffect(() => { refresh(); }, [id]);
+
+  const getAuthorDisplay = (authorId: string) => {
+    const isMe = authorId === currentUid;
+    const profile = profiles.find((p) => p.userId === authorId);
+    const avatar = profile?.avatar || (isMe ? "👦" : "👧");
+    const name = profile?.nickname || (isMe ? "我" : "TA");
+    return { avatar, name, isMe, label: `${avatar} ${name}` };
+  };
 
   const handleDeleteMemory = async () => {
     if (!memory?._id) return;
@@ -134,10 +145,6 @@ export default function MemoryDetail() {
     setComments((prev) => prev.filter((c) => c._id !== commentId));
   };
 
-  const getAuthorLabel = (authorId: string) => {
-    return authorId === currentUid ? "👦 我" : "👧 TA";
-  };
-
   if (loading) {
     return (
       <PageWrapper>
@@ -156,13 +163,14 @@ export default function MemoryDetail() {
     );
   }
 
+  const memoryAuthor = getAuthorDisplay(memory.authorId || "");
+
   return (
     <>
       <PageWrapper>
         <BackButton />
 
         {editing ? (
-          /* ---- Edit Form ---- */
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 space-y-4">
             <h2 className="text-lg font-bold">✏️ 编辑回忆</h2>
             <input
@@ -206,20 +214,17 @@ export default function MemoryDetail() {
             </div>
           </motion.div>
         ) : (
-          /* ---- Detail View ---- */
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
-            {/* Header */}
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">{memory.mood || memory.emoji}</span>
               <div className="flex-1">
                 <h2 className="text-lg font-bold">{memory.activity}</h2>
                 <p className="text-xs text-muted-foreground">
-                  📅 {memory.date} · {getAuthorLabel(memory.authorId || "")}
+                  📅 {memory.date} · {memoryAuthor.label}
                 </p>
               </div>
             </div>
 
-            {/* Content with pre-wrap */}
             {memory.note && (
               <div className="love-card mb-4">
                 <p className="text-sm" style={{ whiteSpace: "pre-wrap" }}>
@@ -228,7 +233,6 @@ export default function MemoryDetail() {
               </div>
             )}
 
-            {/* Images */}
             {imageUrls.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {imageUrls.map((url, i) => (
@@ -243,7 +247,6 @@ export default function MemoryDetail() {
               </div>
             )}
 
-            {/* Action buttons */}
             <div className="flex gap-2 mb-6">
               <button
                 onClick={startEdit}
@@ -259,7 +262,7 @@ export default function MemoryDetail() {
               </button>
             </div>
 
-            {/* Collaborative Writing Section */}
+            {/* Comments */}
             <div className="mb-6">
               <h3 className="text-sm font-semibold mb-3">💬 对话记录</h3>
               {comments.length === 0 && (
@@ -267,28 +270,31 @@ export default function MemoryDetail() {
               )}
               <div className="space-y-2">
                 {comments.map((c) => {
-                  const isMe = c.authorId === currentUid;
+                  const author = getAuthorDisplay(c.authorId);
                   return (
                     <motion.div
                       key={c._id}
-                      initial={{ opacity: 0, x: isMe ? 20 : -20 }}
+                      initial={{ opacity: 0, x: author.isMe ? 20 : -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+                      className={`flex ${author.isMe ? "justify-end" : "justify-start"}`}
                     >
+                      {!author.isMe && (
+                        <span className="text-2xl mr-2 self-end">{author.avatar}</span>
+                      )}
                       <div
-                        className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
-                          isMe
+                        className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
+                          author.isMe
                             ? "bg-primary text-primary-foreground rounded-br-sm"
                             : "bg-secondary text-secondary-foreground rounded-bl-sm"
                         }`}
                       >
-                        <p className="text-[10px] opacity-70 mb-0.5">{getAuthorLabel(c.authorId)}</p>
+                        <p className="text-[10px] opacity-70 mb-0.5">{author.label}</p>
                         <p style={{ whiteSpace: "pre-wrap" }}>{c.content}</p>
                         <div className="flex items-center justify-between mt-1">
                           <span className="text-[9px] opacity-50">
                             {new Date(c.createdAt).toLocaleString("zh-CN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                           </span>
-                          {isMe && (
+                          {author.isMe && (
                             <button
                               onClick={() => handleDeleteComment(c._id!)}
                               className="text-[9px] opacity-50 hover:opacity-100 ml-2"
@@ -298,13 +304,15 @@ export default function MemoryDetail() {
                           )}
                         </div>
                       </div>
+                      {author.isMe && (
+                        <span className="text-2xl ml-2 self-end">{author.avatar}</span>
+                      )}
                     </motion.div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Comment Input */}
             <div className="flex gap-2 items-end sticky bottom-0 bg-background pt-2 pb-4">
               <textarea
                 value={commentText}
@@ -325,7 +333,6 @@ export default function MemoryDetail() {
         )}
       </PageWrapper>
 
-      {/* Image Lightbox */}
       <AnimatePresence>
         {lightboxIndex !== null && (
           <ImageLightbox

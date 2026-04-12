@@ -312,6 +312,58 @@ export async function updateTaskStatus(id: string, status: "pending" | "done"): 
   await db.collection("tasks").doc(id).update({ status });
 }
 
+export async function updateTask(id: string, data: { title?: string; emoji?: string; scheduledAt?: string }): Promise<void> {
+  await ensureAuth();
+  const db = getDb();
+  await db.collection("tasks").doc(id).update(data);
+}
+
+// --- User Profiles ---
+
+export interface CloudUserProfile {
+  _id?: string;
+  userId: string;
+  coupleId: string;
+  nickname: string;
+  avatar: string; // emoji or fileID
+  createdAt: number;
+}
+
+export async function getUserProfile(uid?: string): Promise<CloudUserProfile | null> {
+  await ensureAuth();
+  const db = getDb();
+  const coupleId = getCoupleId();
+  const userId = uid || await getCurrentUid();
+  const res = await db.collection("user_profiles").where({ coupleId, userId }).limit(1).get();
+  return (res.data[0] as CloudUserProfile) || null;
+}
+
+export async function setUserProfile(data: { nickname: string; avatar: string }): Promise<void> {
+  await ensureAuth();
+  const db = getDb();
+  const coupleId = getCoupleId();
+  const userId = await getCurrentUid();
+  const existing = await getUserProfile(userId);
+  if (existing?._id) {
+    await db.collection("user_profiles").doc(existing._id).update(data);
+  } else {
+    await db.collection("user_profiles").add({
+      ...data,
+      userId,
+      coupleId,
+      createdAt: Date.now(),
+    });
+  }
+}
+
+export async function getCoupleProfiles(): Promise<CloudUserProfile[]> {
+  await ensureAuth();
+  const db = getDb();
+  const coupleId = getCoupleId();
+  const res = await db.collection("user_profiles").where({ coupleId }).limit(10).get();
+  return res.data as CloudUserProfile[];
+}
+
 export async function deleteTask(id: string): Promise<void> {
   await ensureAuth();
   const db = getDb();
