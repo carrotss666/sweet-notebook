@@ -53,6 +53,7 @@ const App = () => {
             <Route path="/memories" element={<Memories />} />
             <Route path="/memory/:id" element={<MemoryDetail />} />
             <Route path="/add-memory" element={<AddMemory />} />
+            <Route path="/profile" element={<ProfileSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
