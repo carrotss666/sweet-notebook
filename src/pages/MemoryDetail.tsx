@@ -6,7 +6,6 @@ import BackButton from "@/components/BackButton";
 import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
 import ImageLightbox from "@/components/ImageLightbox";
 import { getLocalProfile } from "@/components/ProfileDialog";
-import ImageLightbox from "@/components/ImageLightbox";
 import {
   getMemoryById,
   updateMemory,
