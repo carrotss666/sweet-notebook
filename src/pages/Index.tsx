@@ -5,6 +5,7 @@ import PageWrapper from "@/components/PageWrapper";
 import BottomNav from "@/components/BottomNav";
 import RecordDialog from "@/components/RecordDialog";
 import TaskEditDialog from "@/components/TaskEditDialog";
+import ProfileDialog from "@/components/ProfileDialog";
 import { getTasks, updateTaskStatus, deleteTask, type CloudTask } from "@/lib/cloudStore";
 
 const actions = [
@@ -74,6 +75,11 @@ export default function Index() {
   return (
     <>
       <PageWrapper>
+        {/* Profile icon top-right */}
+        <div className="flex justify-end mb-2">
+          <ProfileDialog />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}

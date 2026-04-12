@@ -4,7 +4,6 @@ const tabs = [
   { path: "/", icon: "🏠", label: "首页" },
   { path: "/checklist", icon: "📋", label: "清单" },
   { path: "/memories", icon: "💕", label: "回忆" },
-  { path: "/profile", icon: "⚙️", label: "我的" },
 ];
 
 export default function BottomNav() {

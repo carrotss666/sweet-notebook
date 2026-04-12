@@ -5,6 +5,7 @@ import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
 import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
 import ImageLightbox from "@/components/ImageLightbox";
+import { getLocalProfile } from "@/components/ProfileDialog";
 import {
   getMemoryById,
   updateMemory,
@@ -70,9 +71,10 @@ export default function MemoryDetail() {
 
   const getAuthorDisplay = (authorId: string) => {
     const isMe = authorId === currentUid;
+    const localProfile = getLocalProfile();
     const profile = profiles.find((p) => p.userId === authorId);
-    const avatar = profile?.avatar || (isMe ? "👦" : "👧");
-    const name = profile?.nickname || (isMe ? "我" : "TA");
+    const avatar = isMe ? localProfile.avatar : (profile?.avatar || "👧");
+    const name = isMe ? localProfile.nickname : (profile?.nickname || "TA");
     return { avatar, name, isMe, label: `${avatar} ${name}` };
   };
 

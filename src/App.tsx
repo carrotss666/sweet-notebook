@@ -18,7 +18,7 @@ import Checklist from "./pages/Checklist";
 import Memories from "./pages/Memories";
 import MemoryDetail from "./pages/MemoryDetail";
 import AddMemory from "./pages/AddMemory";
-import ProfileSettings from "./pages/ProfileSettings";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,7 +53,7 @@ const App = () => {
             <Route path="/memories" element={<Memories />} />
             <Route path="/memory/:id" element={<MemoryDetail />} />
             <Route path="/add-memory" element={<AddMemory />} />
-            <Route path="/profile" element={<ProfileSettings />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
