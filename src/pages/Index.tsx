@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "@/components/PageWrapper";
 import BottomNav from "@/components/BottomNav";
 import RecordDialog from "@/components/RecordDialog";
+import TaskEditDialog from "@/components/TaskEditDialog";
 import { getTasks, updateTaskStatus, deleteTask, type CloudTask } from "@/lib/cloudStore";
 
 const actions = [
@@ -42,6 +43,7 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [recordTask, setRecordTask] = useState<CloudTask | null>(null);
+  const [editTask, setEditTask] = useState<CloudTask | null>(null);
 
   useEffect(() => {
     getTasks()
@@ -101,8 +103,11 @@ export default function Index() {
                   className="love-card flex items-center gap-3 border border-border/50"
                 >
                   <span className="text-xl">{task.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{task.title}</p>
+                  <div
+                    className="flex-1 min-w-0 cursor-pointer"
+                    onClick={() => setEditTask(task)}
+                  >
+                    <p className="text-sm font-medium line-clamp-2">{task.title}</p>
                     <p className="text-[11px] text-muted-foreground">
                       ⏰ {formatSchedule(task.scheduledAt)}
                       {task.source === "random" && " · 🎰 随机"}
@@ -180,6 +185,19 @@ export default function Index() {
           }}
         />
       )}
+
+      <AnimatePresence>
+        {editTask && (
+          <TaskEditDialog
+            task={editTask}
+            onClose={() => setEditTask(null)}
+            onUpdated={(updated) => {
+              setTasks((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+              setEditTask(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }

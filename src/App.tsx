@@ -18,6 +18,7 @@ import Checklist from "./pages/Checklist";
 import Memories from "./pages/Memories";
 import MemoryDetail from "./pages/MemoryDetail";
 import AddMemory from "./pages/AddMemory";
+import ProfileSettings from "./pages/ProfileSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

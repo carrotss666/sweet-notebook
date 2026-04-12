@@ -4,6 +4,7 @@ const tabs = [
   { path: "/", icon: "🏠", label: "首页" },
   { path: "/checklist", icon: "📋", label: "清单" },
   { path: "/memories", icon: "💕", label: "回忆" },
+  { path: "/profile", icon: "⚙️", label: "我的" },
 ];
 
 export default function BottomNav() {
@@ -19,7 +20,7 @@ export default function BottomNav() {
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className={`flex flex-col items-center gap-0.5 px-6 py-2 rounded-xl transition-all duration-200 ${
+              className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 ${
                 active
                   ? "text-primary scale-105"
                   : "text-muted-foreground hover:text-foreground"
