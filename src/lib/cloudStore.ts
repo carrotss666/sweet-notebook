@@ -35,6 +35,7 @@ export interface CloudTask {
   _id?: string;
   coupleId: string;
   title: string;
+  content?: string;
   emoji: string;
   source: "random" | "recommend" | "manual";
   status: "pending" | "done";
@@ -290,6 +291,7 @@ export async function getTasks(): Promise<CloudTask[]> {
 
 export async function addTask(data: {
   title: string;
+  content?: string;
   emoji: string;
   source: "random" | "recommend" | "manual";
   scheduledAt?: string;
@@ -312,7 +314,7 @@ export async function updateTaskStatus(id: string, status: "pending" | "done"): 
   await db.collection("tasks").doc(id).update({ status });
 }
 
-export async function updateTask(id: string, data: { title?: string; emoji?: string; scheduledAt?: string }): Promise<void> {
+export async function updateTask(id: string, data: { title?: string; content?: string; emoji?: string; scheduledAt?: string }): Promise<void> {
   await ensureAuth();
   const db = getDb();
   await db.collection("tasks").doc(id).update(data);

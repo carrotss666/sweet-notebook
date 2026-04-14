@@ -114,6 +114,11 @@ export default function Index() {
                     onClick={() => setEditTask(task)}
                   >
                     <p className="text-sm font-medium line-clamp-2">{task.title}</p>
+                    {task.content && (
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5" style={{ whiteSpace: "pre-wrap" }}>
+                        {task.content}
+                      </p>
+                    )}
                     <p className="text-[11px] text-muted-foreground">
                       ⏰ {formatSchedule(task.scheduledAt)}
                       {task.source === "random" && " · 🎰 随机"}
@@ -182,6 +187,7 @@ export default function Index() {
       {recordTask && (
         <RecordDialog
           activity={recordTask.title}
+          content={recordTask.content}
           emoji={recordTask.emoji}
           onClose={() => setRecordTask(null)}
           onSaved={async () => {

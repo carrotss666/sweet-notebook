@@ -14,9 +14,13 @@ export default function CustomDecide() {
   const start = async () => {
     if (!text.trim() || starting) return;
     setStarting(true);
+    const lines = text.trim().split("\n");
+    const title = lines[0].trim();
+    const content = lines.slice(1).join("\n").trim() || undefined;
     await addTask({
       emoji: "💕",
-      title: text.trim(),
+      title,
+      content,
       source: "manual",
       scheduledAt,
     });

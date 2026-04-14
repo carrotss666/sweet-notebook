@@ -11,6 +11,7 @@ interface Props {
 
 export default function TaskEditDialog({ task, onClose, onUpdated }: Props) {
   const [title, setTitle] = useState(task.title);
+  const [content, setContent] = useState(task.content || "");
   const [schedule, setSchedule] = useState<string | undefined>(task.scheduledAt);
   const [saving, setSaving] = useState(false);
 
@@ -18,8 +19,8 @@ export default function TaskEditDialog({ task, onClose, onUpdated }: Props) {
     if (!title.trim() || saving) return;
     setSaving(true);
     try {
-      await updateTask(task._id!, { title: title.trim(), scheduledAt: schedule });
-      onUpdated({ ...task, title: title.trim(), scheduledAt: schedule });
+      await updateTask(task._id!, { title: title.trim(), content: content.trim() || undefined, scheduledAt: schedule });
+      onUpdated({ ...task, title: title.trim(), content: content.trim() || undefined, scheduledAt: schedule });
     } catch (e) {
       console.error("Update task failed:", e);
     }
@@ -50,6 +51,16 @@ export default function TaskEditDialog({ task, onClose, onUpdated }: Props) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full bg-secondary rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+        </div>
+
+        <div>
+          <p className="text-xs text-muted-foreground mb-1">详细内容</p>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="写点详细内容…（可选）"
+            className="w-full bg-secondary rounded-xl p-3 text-sm resize-none h-28 focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
 
