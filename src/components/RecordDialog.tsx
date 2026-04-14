@@ -6,14 +6,16 @@ import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
 
 interface Props {
   activity: string;
+  content?: string;
   emoji: string;
   onClose: () => void;
   onSaved?: () => void;
 }
 
-export default function RecordDialog({ activity, emoji, onClose, onSaved }: Props) {
+export default function RecordDialog({ activity, content, emoji, onClose, onSaved }: Props) {
   const navigate = useNavigate();
-  const [note, setNote] = useState("");
+  const [title, setTitle] = useState(activity);
+  const [note, setNote] = useState(content || "");
   const [images, setImages] = useState<ImageItem[]>([]);
   const [mood, setMood] = useState("😊");
   const [saving, setSaving] = useState(false);
@@ -21,22 +23,20 @@ export default function RecordDialog({ activity, emoji, onClose, onSaved }: Prop
   const moods = ["😊", "😐", "😍", "😢", "🤩"];
 
   const handleSave = async () => {
-    if (saving) return;
+    if (saving || !title.trim()) return;
     try {
       setSaving(true);
-      // Upload new images
       const newFiles = images.filter((img) => img.file).map((img) => img.file!);
       const fileIDs = newFiles.length > 0 ? await uploadImages(newFiles) : [];
 
       await saveMemory({
         date: new Date().toISOString().slice(0, 10).replace(/-/g, "."),
-        activity,
+        activity: title.trim(),
         emoji,
         note,
         images: fileIDs,
         mood,
       });
-      // Task status update handled by parent via onSaved
       onSaved?.();
       navigate("/save-success");
     } catch (e) {
@@ -76,13 +76,21 @@ export default function RecordDialog({ activity, emoji, onClose, onSaved }: Prop
           ))}
         </div>
 
+        <label className="text-sm text-muted-foreground block mb-2">标题</label>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="标题…"
+          className="w-full bg-secondary rounded-xl px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-primary/30"
+        />
+
         <label className="text-sm text-muted-foreground block mb-2">
-          今天感觉怎么样？💭
+          详细内容 💭
         </label>
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="写一句话…"
+          placeholder="写点什么…"
           className="w-full bg-secondary rounded-xl p-3 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
         />
 
@@ -92,7 +100,7 @@ export default function RecordDialog({ activity, emoji, onClose, onSaved }: Prop
 
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !title.trim()}
           className="mt-6 w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-soft disabled:opacity-60"
         >
           {saving ? "保存中…" : "✅ 保存回忆"}
