@@ -1,16 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import PageWrapper from "@/components/PageWrapper";
 import BackButton from "@/components/BackButton";
 import { saveMemory, uploadImages } from "@/lib/cloudStore";
 import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export default function AddMemory() {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [note, setNote] = useState("");
   const [images, setImages] = useState<ImageItem[]>([]);
+  const [eventDate, setEventDate] = useState<Date>(new Date());
   const [saving, setSaving] = useState(false);
+
+  const formatDateStr = (d: Date) =>
+    `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 
   const handleSave = async () => {
     if (!text.trim() || saving) return;
@@ -18,13 +28,15 @@ export default function AddMemory() {
       setSaving(true);
       const newFiles = images.filter((img) => img.file).map((img) => img.file!);
       const fileIDs = newFiles.length > 0 ? await uploadImages(newFiles) : [];
+      const dateStr = formatDateStr(eventDate);
 
       await saveMemory({
-        date: new Date().toISOString().slice(0, 10).replace(/-/g, "."),
+        date: dateStr,
         activity: text.trim(),
         emoji: "💕",
         note,
         images: fileIDs,
+        eventDate: dateStr,
       });
       navigate("/save-success");
     } catch (e) {
@@ -39,6 +51,33 @@ export default function AddMemory() {
       <div className="text-center mb-6 mt-4">
         <p className="text-lg text-muted-foreground">今天做了什么？💭</p>
       </div>
+
+      <label className="text-sm text-muted-foreground block mb-2">
+        📅 活动发生日期
+      </label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className={cn(
+              "w-full justify-start text-left font-normal mb-3",
+              "bg-card border-0 shadow-soft"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {format(eventDate, "yyyy年M月d日")}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={eventDate}
+            onSelect={(d) => d && setEventDate(d)}
+            initialFocus
+            className={cn("p-3 pointer-events-auto")}
+          />
+        </PopoverContent>
+      </Popover>
 
       <input
         value={text}

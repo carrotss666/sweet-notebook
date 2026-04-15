@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { saveMemory, uploadImages } from "@/lib/cloudStore";
 import ImageUploader, { type ImageItem } from "@/components/ImageUploader";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface Props {
   activity: string;
@@ -18,9 +24,13 @@ export default function RecordDialog({ activity, content, emoji, onClose, onSave
   const [note, setNote] = useState(content || "");
   const [images, setImages] = useState<ImageItem[]>([]);
   const [mood, setMood] = useState("😊");
+  const [eventDate, setEventDate] = useState<Date>(new Date());
   const [saving, setSaving] = useState(false);
 
   const moods = ["😊", "😐", "😍", "😢", "🤩"];
+
+  const formatDateStr = (d: Date) =>
+    `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 
   const handleSave = async () => {
     if (saving || !title.trim()) return;
@@ -28,14 +38,16 @@ export default function RecordDialog({ activity, content, emoji, onClose, onSave
       setSaving(true);
       const newFiles = images.filter((img) => img.file).map((img) => img.file!);
       const fileIDs = newFiles.length > 0 ? await uploadImages(newFiles) : [];
+      const dateStr = formatDateStr(eventDate);
 
       await saveMemory({
-        date: new Date().toISOString().slice(0, 10).replace(/-/g, "."),
+        date: dateStr,
         activity: title.trim(),
         emoji,
         note,
         images: fileIDs,
         mood,
+        eventDate: dateStr,
       });
       onSaved?.();
       navigate("/save-success");
@@ -57,9 +69,36 @@ export default function RecordDialog({ activity, content, emoji, onClose, onSave
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 25 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-card w-full max-w-md rounded-t-3xl p-6 pb-8"
+        className="bg-card w-full max-w-md rounded-t-3xl p-6 pb-8 max-h-[85vh] overflow-y-auto"
       >
         <h3 className="text-center text-lg font-bold mb-4">记录一下今天 💕</h3>
+
+        <label className="text-sm text-muted-foreground block mb-2">
+          📅 活动发生日期
+        </label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal mb-4",
+                "bg-secondary border-0"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {format(eventDate, "yyyy年M月d日")}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={eventDate}
+              onSelect={(d) => d && setEventDate(d)}
+              initialFocus
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
 
         <label className="text-sm text-muted-foreground block mb-2">
           今天心情如何？
