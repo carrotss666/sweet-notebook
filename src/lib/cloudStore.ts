@@ -10,6 +10,7 @@ export interface CloudMemory {
   note: string;
   images: string[]; // fileID array
   mood?: string;
+  eventDate?: string; // actual event date (YYYY.MM.DD), falls back to date
   authorId?: string;
   createdAt: number;
 }

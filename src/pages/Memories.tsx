@@ -299,8 +299,9 @@ export default function Memories() {
   const memoryByDate = useMemo(() => {
     const map: Record<string, CloudMemory[]> = {};
     memories.forEach((m) => {
-      if (!map[m.date]) map[m.date] = [];
-      map[m.date].push(m);
+      const displayDate = m.eventDate || m.date;
+      if (!map[displayDate]) map[displayDate] = [];
+      map[displayDate].push(m);
     });
     return map;
   }, [memories]);
